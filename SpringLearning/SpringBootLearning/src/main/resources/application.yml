@@ -1,0 +1,14 @@
+server:
+  port: 8888
+# 自定义配置项
+Spring:
+  profiles:
+    active: dev
+  datasource:
+    url:
+    username:
+    password:
+
+
+# 自定义对象
+Student: {id: 1, name: zhangsan,age: 18}
