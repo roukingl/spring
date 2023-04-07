@@ -1,0 +1,11 @@
+logging:
+  file:
+#    path: D:\\Files
+    name: D:\\Files\
+  level:
+    root: error
+    com:
+      example:
+        demo:
+          controller: trace
+          service: info

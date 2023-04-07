@@ -3,7 +3,7 @@ server:
 # 自定义配置项
 Spring:
   profiles:
-    active: dev
+    active: prod
   datasource:
     url:
     username:
