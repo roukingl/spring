@@ -1,15 +1,45 @@
-server:
-  port: 8888
-# 自定义配置项
-Spring:
-  profiles:
-    active: prod
-  datasource:
-    url:
-    username:
-    password:
+#server:
+#  port: 8888
+## 自定义配置项
+#Spring:
+#  profiles:
+#    active: prod
+#  datasource:
+#    url:
+#    username:
+#    password:
+#
+#mytest: zhangsan
+#
+## 自定义对象
+#Student: {id: 1, name: zhangsan,age: 18}
 
-mytest: zhangsan
+# 端口号配置
+#server:
+#  port: 6666
+#logging:
+#  logback:
+#    rollingpolicy:
+#      file-name-pattern: ${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz
+# 数据库配置
+#Spring:
+#  datasource:
+#    url: jdbc:mysql://193.0.0.1:3306/testdb?characterEncoding=utf8
+#    username: root
+#    password: 111111
 
-# 自定义对象
-Student: {id: 1, name: zhangsan,age: 18}
+# 日志配置
+#debug: true
+#trace: true
+
+
+logging:
+  file:
+    name: D://Files//log_all.log
+  level:
+    root: error
+    com:
+      example:
+        demo:
+          controller: error
+          service: warn
