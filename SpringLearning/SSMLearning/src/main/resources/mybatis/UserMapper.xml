@@ -2,8 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybati
 s.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.UserMapper">
-    
     <select id="getUserById" resultType="com.example.demo.entity.Userinfo">
-        select * from userinfo where id=${userId}
+        select * from userinfo where id=#{userId}
     </select>
+
+    <select id="getUserAll" resultType="com.example.demo.entity.Userinfo">
+        select * from userinfo;
+    </select>
+
+    <insert id="addUser">
+        insert into userinfo(username, password, createtime, updatetime)
+        values(#{username}, #{password}, #{createtime}, #{updatetime})
+    </insert>
 </mapper>
