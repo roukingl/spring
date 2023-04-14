@@ -23,9 +23,39 @@ public interface UserMapper {
     List<Userinfo> getUserAll();
 
     /**
+     * 通过倒序id查询元素
+     * @param sort 倒序的关键字 使用$
+     * @return 返回所有查询的元素
+     */
+    List<Userinfo> getUserAllByIdSortDesc(@Param("sort") String sort);
+
+    /**
      * 插入元素
      * @param userinfo 要插入的元素
      * @return 返回受影响的行数
      */
     int addUser(Userinfo userinfo);
+
+    /**
+     * 添加元素并返回 id
+     * @param userinfo 添加的元素
+     * @return 返回受影响的行数
+     */
+    int addUserGetId(Userinfo userinfo);
+
+    /**
+     * 修改元素并返回受影响的行数
+     * @param userinfo 添加的元素
+     * @return 返回受影响的行数
+     */
+    int updateUserName(Userinfo userinfo);
+
+    /**
+     * 删除 id 的 元素
+     * @param id 要删除元素的 id
+     * @return 返回受影响的行数
+     */
+    int deleteById(@Param("id") Integer id);
+
+
 }

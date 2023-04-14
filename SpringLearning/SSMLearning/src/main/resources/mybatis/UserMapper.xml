@@ -10,8 +10,25 @@ s.org/dtd/mybatis-3-mapper.dtd">
         select * from userinfo;
     </select>
 
+    <select id="getUserAllByIdSortDesc" resultType="com.example.demo.entity.Userinfo">
+        select * from userinfo order by id ${sort}
+    </select>
+
     <insert id="addUser">
         insert into userinfo(username, password, createtime, updatetime)
         values(#{username}, #{password}, #{createtime}, #{updatetime})
     </insert>
+
+    <insert id="addUserGetId" useGeneratedKeys="true" keyProperty="id" >
+        insert into userinfo(username, password, createtime, updatetime)
+        values(#{username}, #{password}, #{createtime}, #{updatetime})
+    </insert>
+
+    <update id="updateUserName">
+        update userinfo set username = #{username} where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from userinfo where id = #{id}
+    </delete>
 </mapper>
