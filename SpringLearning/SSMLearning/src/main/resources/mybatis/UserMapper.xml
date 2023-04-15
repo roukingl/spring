@@ -10,7 +10,7 @@ s.org/dtd/mybatis-3-mapper.dtd">
         select * from userinfo;
     </select>
 
-    <select id="getUserAllByIdSortDesc" resultType="com.example.demo.entity.Userinfo">
+    <select id="getUserAllByIdSort" resultType="com.example.demo.entity.Userinfo">
         select * from userinfo order by id ${sort}
     </select>
 
@@ -31,4 +31,8 @@ s.org/dtd/mybatis-3-mapper.dtd">
     <delete id="deleteById">
         delete from userinfo where id = #{id}
     </delete>
+
+    <select id="getUserByName" resultType="com.example.demo.entity.Userinfo">
+        select * from userinfo where username like concat('%', #{username}, '%')
+    </select>
 </mapper>

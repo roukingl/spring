@@ -75,9 +75,17 @@ class UserMapperTest {
     }
 
     @Test
-    void getUserAllByIdSortDesc() {
+    void getUserAllByIdSort() {
         List<Userinfo> list = userMapper.getUserAllByIdSortDesc("desc");
         System.out.println("list = " + list);
         Assertions.assertEquals(4, list.size());
+    }
+
+    @Test
+    void getUserByName() {
+        String username = "m";
+        List<Userinfo> list = userMapper.getUserByName(username);
+        System.out.println("list = " + list);
+        Assertions.assertEquals(1, list.size());
     }
 }

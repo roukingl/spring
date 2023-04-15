@@ -57,5 +57,5 @@ public interface UserMapper {
      */
     int deleteById(@Param("id") Integer id);
 
-
+    List<Userinfo> getUserByName(@Param("username") String username);
 }
