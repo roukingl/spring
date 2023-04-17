@@ -58,4 +58,10 @@ public interface UserMapper {
     int deleteById(@Param("id") Integer id);
 
     List<Userinfo> getUserByName(@Param("username") String username);
+
+    int addUser2(Userinfo userinfo);
+
+    int addUser3(Userinfo userinfo);
+
+    int deleteUsersById(List<Integer> ids);
 }

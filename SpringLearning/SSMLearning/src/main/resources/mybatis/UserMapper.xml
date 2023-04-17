@@ -35,4 +35,51 @@ s.org/dtd/mybatis-3-mapper.dtd">
     <select id="getUserByName" resultType="com.example.demo.entity.Userinfo">
         select * from userinfo where username like concat('%', #{username}, '%')
     </select>
+
+    <insert id="addUser2">
+        insert into userinfo(username,
+        <if test="photo != null">
+            photo,
+        </if>
+        password)
+        values(#{username},
+        <if test="photo != null">
+            #{photo},
+        </if>
+        #{password})
+    </insert>
+    
+    <insert id="addUser3">
+        insert into userinfo
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="username != null">
+                    username,
+                </if>
+                <if test="password != null">
+                    password,
+                </if>
+                <if test="photo != null">
+                    photo,
+                </if>
+            </trim>
+        values
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="username != null">
+                    #{username},
+                </if>
+                <if test="password != null">
+                    #{password},
+                </if>
+                <if test="photo != null">
+                    #{photo},
+                </if>
+            </trim>
+    </insert>
+
+    <delete id="deleteUsersById">
+        delete from userinfo where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator="," >
+            #{id}
+        </foreach>
+    </delete>
 </mapper>

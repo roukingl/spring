@@ -8,11 +8,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Transactional
 @SpringBootTest
 class UserMapperTest {
 
@@ -68,7 +68,7 @@ class UserMapperTest {
 
     @Test
     void deleteById() {
-        Integer id = 5;
+        Integer id = 7;
         int numberOfAffectedRows = userMapper.deleteById(id);
         System.out.println("numberOfAffectedRows = " + numberOfAffectedRows);
         Assertions.assertEquals(1, numberOfAffectedRows);
@@ -87,5 +87,34 @@ class UserMapperTest {
         List<Userinfo> list = userMapper.getUserByName(username);
         System.out.println("list = " + list);
         Assertions.assertEquals(1, list.size());
+    }
+
+    @Test
+    void addUser2() {
+        Userinfo userinfo = new Userinfo();
+        userinfo.setUsername("张三");
+        userinfo.setPhoto(null);
+        userinfo.setPassword("q12fwe");
+        int numberOfAffectedRows = userMapper.addUser2(userinfo);
+        Assertions.assertEquals(1, numberOfAffectedRows);
+    }
+
+    @Test
+    void addUser3() {
+        Userinfo userinfo = new Userinfo();
+        userinfo.setUsername("bilibili");
+        userinfo.setPassword("bilibili");
+        userinfo.setPhoto("bilibili.jpg");
+        int numberOfAffectedRows = userMapper.addUser3(userinfo);
+        System.out.println(numberOfAffectedRows);
+        Assertions.assertEquals(1, numberOfAffectedRows);
+    }
+
+    @Test
+    void deleteUsersById() {
+        List<Integer> ids = new ArrayList<>();
+        ids.add(4);
+        ids.add(9);
+        userMapper.deleteUsersById(ids);
     }
 }
