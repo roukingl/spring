@@ -17,5 +17,6 @@ public class ArticleinfoVO extends Articleinfo implements Serializable {
         return "ArticleinfoVO{" +
                 "username='" + username + '\'' +
                 "} " + super.toString();
+
     }
 }
