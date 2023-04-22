@@ -3,9 +3,16 @@ package com.example.demo.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Random;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
+    @RequestMapping("/getrandom")
+    public int getRandom() {
+        return new Random().nextInt(10);
+    }
 
     @RequestMapping("/getuser")
     public String getUser() {
