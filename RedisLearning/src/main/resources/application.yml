@@ -1,0 +1,6 @@
+# redis 配置
+spring:
+  redis:
+    database: 15
+    port: 6379
+    host: 152.136.196.221
