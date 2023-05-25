@@ -36,6 +36,8 @@ public class RedisAnnController {
         if (!StringUtils.hasLength(name) || !StringUtils.hasLength(number)) {
             return;
         }
+
+
         System.out.println("执行了 del 方法");
     }
 }
