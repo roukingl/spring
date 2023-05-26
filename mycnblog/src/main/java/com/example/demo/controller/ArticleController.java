@@ -117,7 +117,7 @@ public class ArticleController {
     }
 
     @RequestMapping("/listpage")
-    public AjaxResult getListPage(@RequestParam("pindex") Integer pindex, @RequestParam("psize")Integer psize) {
+    public AjaxResult getListPage(@RequestParam("pindex") Integer pindex, @RequestParam("psize") Integer psize) {
         // 1. 参数校正
         if (pindex == null || pindex == 0) {
             pindex = 1;
@@ -148,19 +148,6 @@ public class ArticleController {
         return AjaxResult.success(draftList);
     }
 
-    @RequestMapping("/deldraft")
-    public AjaxResult deleteDraft(@RequestParam("id") Integer id, HttpServletRequest request) {
-        if (id == null || id <= 0) {
-            return AjaxResult.fail(0, "参数错误");
-        }
-        Userinfo userinfo = UserSessionUtils.getUser(request);
-        if (userinfo == null) {
-            return AjaxResult.fail(-1, "非法访问");
-        }
-        int row = articleService.deleteDraftService(id, userinfo.getId());
-        return AjaxResult.success(row);
-    }
-
     @RequestMapping("/save")
     public AjaxResult saveDraft(Articleinfo articleinfo, HttpServletRequest request) {
         if (articleinfo == null || !StringUtils.hasLength(articleinfo.getTitle())
@@ -171,18 +158,16 @@ public class ArticleController {
         if (userinfo == null) {
             return AjaxResult.fail(-1, "非法访问");
         }
-        articleinfo.setUid(userinfo.getId());
-        articleinfo.setUpdatetime(null);
-        articleinfo.setCreatetime(null);
-        int row = articleService.updateArticleService(articleinfo);
+        int row = articleService.saveDraftService(articleinfo, userinfo);
         return AjaxResult.success(row);
     }
 
+    // 增加页面和修改页面的定时博客借口分开
     @RequestMapping("/releasetime")
     public AjaxResult releaseTime(Articleinfo articleinfo, HttpServletRequest request, @RequestParam("releaseTime") String releaseTime) {
-        if (articleinfo == null || !StringUtils.hasLength(articleinfo.getTitle())
-                || !StringUtils.hasLength(articleinfo.getContent()) || articleinfo.getId() <= 0
-                || !StringUtils.hasLength(releaseTime)) {
+        if (articleinfo == null || releaseTime == null
+                || !StringUtils.hasLength(articleinfo.getTitle())
+                || !StringUtils.hasLength(articleinfo.getContent())) {
             return AjaxResult.fail(0, "参数错误");
         }
         Userinfo userinfo = UserSessionUtils.getUser(request);
@@ -192,4 +177,27 @@ public class ArticleController {
         int row = articleService.insertArticleService(articleinfo, userinfo, releaseTime);
         return AjaxResult.success(row);
     }
+
+    // timelist 展示该用户所有的定时发布的文章
+    @RequestMapping("/timelist")
+    public AjaxResult getTimeList(HttpServletRequest request) {
+        Userinfo userinfo = UserSessionUtils.getUser(request);
+        if (userinfo == null) {
+            return AjaxResult.fail(-1, "非法访问");
+        }
+        List<Articleinfo> list = articleService.getTimeArticleListService(userinfo);
+        return AjaxResult.success(list);
+    }
+
+    // publishnow 立即发布当前的定时文章
+    @RequestMapping("/publishnow")
+    public AjaxResult publishNowArt(@RequestParam("id") Integer id, HttpServletRequest request) {
+        Userinfo userinfo = UserSessionUtils.getUser(request);
+        if (userinfo == null) {
+            return AjaxResult.fail(-1, "非法访问");
+        }
+        int row = articleService.publishNowService(id, userinfo);
+        return AjaxResult.success(row);
+    }
+
 }

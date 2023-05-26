@@ -23,11 +23,16 @@ public interface ArticleMapper {
 
     int insertArticle(Articleinfo articleinfo);
 
+    int insertArticleTime(Articleinfo articleinfo);
+
+    int updateTimeArticle(Articleinfo articleinfo);
+
     int updateArticle(Articleinfo articleinfo);
 
     /**
      * 分页查询
-     * @param psize 每页显示数目
+     *
+     * @param psize   每页显示数目
      * @param offsize 所跳过的数目
      * @return 返回查询到的博客
      */
@@ -35,5 +40,11 @@ public interface ArticleMapper {
 
     List<Articleinfo> getDraftList(@Param("uid") Integer uid);
 
-    int deleteDraft(@Param("id") Integer id, @Param("uid") Integer uid);
+    List<Articleinfo> getTimeArticle();
+
+    List<Articleinfo> getTimeList(@Param("uid") Integer uid);
+
+    int publishNowArticle(@Param("id") Integer id, @Param("uid") Integer uid);
+
+    int publishCheckTime(Articleinfo articleinfo);
 }

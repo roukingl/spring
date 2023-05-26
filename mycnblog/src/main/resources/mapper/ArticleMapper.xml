@@ -6,8 +6,18 @@
         insert into articleinfo(title, content, uid, state) values(#{title}, #{content}, #{uid}, #{state})
     </insert>
 
+    <insert id="insertArticleTime">
+        insert into articleinfo(title, content, createtime, updatetime, uid, state)
+        values(#{title}, #{content}, #{createtime}, #{updatetime}, #{uid}, #{state})
+    </insert>
+
     <update id="incrementRCount">
         update articleinfo set rcount = rcount + 1 where id = #{id}
+    </update>
+
+    <update id="updateTimeArticle">
+        update articleinfo set title = #{title}, content = #{content}, updatetime = #{updatetime}, createtime = #{createtime}, state = #{state}
+        where id = #{id} and uid = #{uid}
     </update>
 
     <update id="updateArticle">
@@ -40,11 +50,22 @@
     </select>
 
     <delete id="deleteArticle">
-        delete from articleinfo where id = #{id} and uid = #{uid} and state = 0
+        delete from articleinfo where id = #{id} and uid = #{uid}
     </delete>
 
-    <delete id="deleteDraft">
-        delete from articleinfo where id = #{id} and uid = #{uid} and state = 1
-    </delete>
+    <select id="getTimeArticle" resultType="com.example.demo.entity.Articleinfo">
+        select * from articleinfo where state = 2
+    </select>
 
+    <select id="getTimeList" resultType="com.example.demo.entity.Articleinfo">
+        select * from articleinfo where state = 2 and uid = #{uid}
+    </select>
+
+    <update id="publishNowArticle">
+        update articleinfo set state = 0 where id = #{id} and uid = #{uid}
+    </update>
+
+    <update id="publishCheckTime">
+        update articleinfo set state = 0 where id = #{id}
+    </update>
 </mapper>

@@ -11,7 +11,9 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/common.js"></script>
 </head>
-
+<!-- 
+    草稿列表页面
+ -->
 <body>
     <!-- 导航栏 -->
     <div class="nav">
@@ -20,8 +22,7 @@
         <!-- 用来占据中间位置 -->
         <span class="spacer"></span>
         <a href="blog_list.html">主页</a>
-        <a href="draft_list.html">草稿</a>
-        <a href="blog_time.html">定时博客</a>
+        <a href="myblog_list.html">个人主页</a>
         <a href="blog_add.html">写博客</a>
         <a href="javascript: logout()">退出登录</a>
     </div>
@@ -71,35 +72,35 @@
 
         function getMyArticleList(){
                 jQuery.ajax({
-                    url:"/art/mylist",
-                    type:"POST",
+                    url:'/art/timelist',
+                    type:'POST',
                     data:{},
                     success:function(result){
                         if(result!=null && result.statusCode==200){
                            // 有两种情况，一种是发表了文章，一种是没有发表任何文章 
                            if(result.data!=null && result.data.length>0){
-                            // 此用户发表文章了
-                            var artListDiv ="";
-                            for(var i=0;i<result.data.length;i++){
-                                var artItem = result.data[i];
-                                artListDiv += '<div class="blog">';
-                                artListDiv += '<div class="title">'+artItem.title+'</div>';
-                                artListDiv += '<div class="date">'+artItem.updatetime+'</div>';
-                                artListDiv += '<div class="desc">';
-                                artListDiv += artItem.content;
-                                artListDiv += '</div>';
-                                artListDiv += '<a href="blog_content.html?id='+
-                                    artItem.id + '" class="detail">查看全文 &gt;&gt;</a>&nbsp;&nbsp;';
-                                artListDiv += '<a href="blog_edit.html?id='+
-                                    artItem.id + '" class="detail">修改 &gt;&gt;</a>&nbsp;&nbsp;';  
-                                artListDiv += '<a href="javascript:myDel('+
-                                    artItem.id+');" class="detail">删除 &gt;&gt;</a>'; 
-                                artListDiv += '</div>';    
-                            }
-                            jQuery("#artDiv").html(artListDiv);
+                                // 此用户发表文章了
+                                var artListDiv ="";
+                                for(var i=0;i<result.data.length;i++){
+                                    var artItem = result.data[i];
+                                    artListDiv += '<div class="blog">';
+                                    artListDiv += '<div class="title">'+artItem.title+'</div>';
+                                    artListDiv += '<div class="date">'+artItem.updatetime+'</div>';
+                                    artListDiv += '<div class="desc">';
+                                    artListDiv += artItem.content;
+                                    artListDiv += '</div>';
+                                    artListDiv += '<a href="blog_edit.html?id='+
+                                        artItem.id + '" class="detail">修改 &gt;&gt;</a>&nbsp;&nbsp;';  
+                                    artListDiv += '<a href="javascript:publishNow('+
+                                        artItem.id+');" class="detail">立即发布 &gt;&gt;</a>&nbsp;&nbsp;'; 
+                                    artListDiv += '<a href="javascript:myDel('+
+                                        artItem.id+');" class="detail">删除 &gt;&gt;</a>'; 
+                                    artListDiv += '</div>';    
+                                }
+                                jQuery("#artDiv").html(artListDiv);
                            }else{
-                            // 当前用户从未发过任何文章
-                            jQuery("#artDiv").html("<h3>暂无文章~</h3>");    
+                                // 当前用户从未发过任何文章
+                                jQuery("#artDiv").html("<h3>暂无定时发布的文章~</h3>");    
                            }
                         }else{
                             alert("查询文章列表出错，请重试！");
@@ -110,9 +111,28 @@
 
         getMyArticleList();
 
+        function publishNow(id) {
+
+            if (confirm("是否立即发布？")) {
+                jQuery.ajax({
+                    url: '/art/publishnow',
+                    type: 'post',
+                    data: {"id": id},
+                    success: function(result) {
+                        if (result != null && result.statusCode == 200 && result.data == 1) {
+                            alert("立即发布成功！");
+                            location.href = location.href;
+                        } else {
+                            alert("发布失败！请重试");
+                        }
+                    }
+                });
+            }
+        }
+
         function myDel(id) {
-            if (confirm("确认删除改文章？")) {
-                // 删除文章
+            if (confirm("确认删除改定时发布文章？")) {
+                // 删除草稿
                 jQuery.ajax({
                     url: 'art/delete',
                     type: 'post',
@@ -121,6 +141,7 @@
                         if (result != null && result.statusCode == 200 && result.data == 1) {
                             location.href = location.href;
                             alert("删除成功");
+                            location.href = location.href;
                         } else {
                             alert("删除失败，请重试");
                         }

@@ -21,11 +21,12 @@
 <body>
     <!-- 导航栏 -->
     <div class="nav">
-        <img src="img/logo2.jpg" alt="">
+        <img src="img/system.png">
         <span class="title">我的博客系统</span>
         <!-- 用来占据中间位置 -->
         <span class="spacer"></span>
         <a href="blog_list.html">主页</a>
+        <a href="myblog_list.html">个人主页</a>
         <a href="blog_edit.html">写博客</a>
         <a href="javascript: logout()">退出登录</a>
     </div>
@@ -36,6 +37,7 @@
             <input type="text" id="title" placeholder="在这里写下文章标题">&nbsp&nbsp
             <button onclick="save()">保存草稿</button>&nbsp&nbsp
             <button onclick="time()">定时发布</button>&nbsp&nbsp
+            <input type="text" id="releasetime" style="width: 420px;" placeholder="格式如:2/30表示两小时三十分钟后发布">&nbsp&nbsp
             <button onclick="mysub()">发布文章</button>
         </div>
         <!-- 创建编辑器标签 -->
@@ -63,16 +65,51 @@
             });
         }
 
+        // 定时发布
+        function time() {
+            
+            var releasetime = jQuery("#releasetime");
+            var title = jQuery("#title");
+
+            if (title.val() == "") {
+                alert("请输入标题");
+                return;
+            }
+            
+            if (editor.getValue() == "") {
+                alert("请输入文章内容");
+                return;
+            }
+            if (releasetime.val() == "") {
+                alert("请输入定时发布时间");
+                return;
+            }
+
+            jQuery.ajax({
+                url: '/art/releasetime',
+                type: 'post',
+                data: {"id": id, "title":  title.val(), "content": editor.getValue(), "releaseTime": releasetime.val()},
+                success: function(result) {
+                    if (result != null && result.statusCode == 200 && result.data == 1) {
+                        alert("定时发布成功");
+                        location.href = "blog_time.html";
+                    } else {
+                        alert("定时发布失败，请重试！");
+                    }
+                }
+            });
+        }
+
         // 保存草稿
         function save() {
 
             var title = jQuery("#title") 
 
-            if(confirm("是否确认保存？")) {
+            if(confirm("是否修改草稿？")) {
                 jQuery.ajax({
                     url: '/art/save',
                     type: 'post',
-                    data: {"id": getUrlValue("id"), "title": title.val(), "content": editor.getValue()},
+                    data: {"id": id, "title": title.val(), "content": editor.getValue()},
                     success: function(result) {
                         if (result != null && result.statusCode == 200 && result.data == 1) {
                             alert("保存草稿成功");

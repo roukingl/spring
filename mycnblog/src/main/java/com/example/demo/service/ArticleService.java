@@ -1,7 +1,5 @@
 package com.example.demo.service;
 
-import com.example.demo.comon.AjaxResult;
-import com.example.demo.comon.UserSessionUtils;
 import com.example.demo.entity.Articleinfo;
 import com.example.demo.entity.Userinfo;
 import com.example.demo.mapper.ArticleMapper;
@@ -47,21 +45,22 @@ public class ArticleService {
         // 计算成秒数
         long time = (Long.parseLong(releaseTimeList[0] )* 60 + Long.parseLong(releaseTimeList[1])) * 60;
         // 把秒数增加到当前时间，搞一个多线程来不断扫描是否达到时间，达到发布
-        LocalDateTime localDateTime = LocalDateTime.now();
-        localDateTime = localDateTime.plusSeconds(time);
+        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime ultimatelyTime = currentTime.plusSeconds(time);
 
         articleinfo.setUid(userinfo.getId());
         articleinfo.setState(2);
-        articleinfo.setCreatetime(localDateTime);
-        articleinfo.setUpdatetime(localDateTime);
-        Thread thread = new Thread( () -> {
-            while(articleinfo.getCreatetime().equals(LocalDateTime.now())) {
-                updateArticleService(articleinfo, userinfo);
-            }
-        });
-        return articleMapper.insertArticle(articleinfo);
+        articleinfo.setCreatetime(ultimatelyTime);
+        articleinfo.setUpdatetime(ultimatelyTime);
+        if (articleinfo.getId() > 0) {
+            // 有效的文章id， 说明是从修改页面加载来的接口，那么久从原来的文章上修改
+            return articleMapper.updateTimeArticle(articleinfo);
+        }
+        // 无效文章 说明是从增加页面加载的接口，插入一个记录
+        return articleMapper.insertArticleTime(articleinfo);
     }
 
+    // 发布
     public int updateArticleService(Articleinfo articleinfo, Userinfo userinfo) {
         articleinfo.setUid(userinfo.getId());
         articleinfo.setUpdatetime(LocalDateTime.now());
@@ -72,7 +71,18 @@ public class ArticleService {
         return articleMapper.updateArticle(articleinfo);
     }
 
-    public int updateArticleService(Articleinfo articleinfo) {
+    // 保存草稿
+    public int saveDraftService(Articleinfo articleinfo, Userinfo userinfo) {
+        articleinfo.setState(1);
+        articleinfo.setUpdatetime(LocalDateTime.now());
+        articleinfo.setUid(userinfo.getId());
+        articleinfo.setRcount(1);
+        return articleMapper.updateArticle(articleinfo);
+    }
+
+    public int publishTimeArticleService(Articleinfo articleinfo, Userinfo userinfo) {
+        articleinfo.setState(0);
+        articleinfo.setUid(userinfo.getId());
         return articleMapper.updateArticle(articleinfo);
     }
 
@@ -88,7 +98,28 @@ public class ArticleService {
         return articleMapper.getDraftList(uid);
     }
 
-    public int deleteDraftService(Integer id, Integer uid) {
-        return articleMapper.deleteDraft(id, uid);
+    public void checkArticleTime() {
+        List<Articleinfo> list = articleMapper.getTimeArticle();
+        if (list == null || list.size() == 0) {
+            return;
+        }
+        for (Articleinfo articleinfo : list) {
+            if (articleinfo.getCreatetime().isBefore(LocalDateTime.now())) {
+                int row = publishCheckTime(articleinfo);
+                // websocket 来主动通知用户定时发布文章成功
+            }
+        }
+    }
+
+    public int publishCheckTime(Articleinfo articleinfo) {
+        return articleMapper.publishCheckTime(articleinfo);
+    }
+
+    public List<Articleinfo> getTimeArticleListService(Userinfo userinfo) {
+        return articleMapper.getTimeList(userinfo.getId());
+    }
+
+    public int publishNowService(Integer id, Userinfo userinfo) {
+        return articleMapper.publishNowArticle(id, userinfo.getId());
     }
 }

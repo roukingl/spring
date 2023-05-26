@@ -21,11 +21,12 @@
 <body>
     <!-- 导航栏 -->
     <div class="nav">
-        <img src="img/logo2.jpg" alt="">
+        <img src="img/system.png">
         <span class="title">我的博客系统</span>
         <!-- 用来占据中间位置 -->
         <span class="spacer"></span>
         <a href="blog_list.html">主页</a>
+        <a href="myblog_list.html">个人主页</a>
         <a href="blog_edit.html">写博客</a>
         <a href="javascript: logout()">退出登录</a>
     </div>
@@ -34,9 +35,9 @@
         <!-- 标题编辑区 -->
         <div class="title">
             <input type="text" id="title" placeholder="在这里写下文章标题">&nbsp&nbsp
-            <button onclick="save()">保存草稿</button>&nbsp&nbsp
+            <button onclick="draft()">保存草稿</button>&nbsp&nbsp
             <button onclick="time()">定时发布</button>&nbsp&nbsp
-            <input type="text" id="releasetime" style="width: 420px;" placeholder="格式如：2/30表示两小时三十分钟后发布">
+            <input type="text" id="releasetime" style="width: 420px;" placeholder="格式如:2/30表示两小时三十分钟后发布">&nbsp&nbsp
             <button onclick="mysub()">发布文章</button>
         </div>
         <!-- 创建编辑器标签 -->
@@ -64,44 +65,41 @@
         initEdit("# 在这里写下一篇博客"); // 初始化编译器的值
 
         function time() {
-            
-            var releasetime = jQuery("#releasetime");
-            var title = jQuery("#title");
 
-            if (title.val() == "") {
-                alert("请输入标题");
-                return;
-            }
-            
-            if (editor.getValue() == "") {
-                alert("请输入文章内容");
-                return;
-            }
-            if (releasetime.val() == "") {
-                alert("请输入定时发布时间");
-                return;
-            }
+            if (confirm("是否定时发布？")) {
+                var releasetime = jQuery("#releasetime");
+                var title = jQuery("#title");
 
-            var release = releasetime.val();
-            var releaseTimeList = releaseTime.split("/");
-            var releaseTime = (releaseTimeList[0] * 60 + releaseTimeList[1]) * 60;
-
-            jQuery.ajax({
-                url: '/art/releasetime',
-                type: 'post',
-                data: {"title":  title.val(), "content": editor.getValue(), "releaseTime": releaseTime},
-                success: function(result) {
-                    if (result != null && result.statusCode == 200 && result.data == 1) {
-                        alert("定时发布成攻");
-                        location.href = blog_time.html;
-                    } else {
-                        alert("定时发布失败，请重试！");
-                    }
+                if (title.val() == "") {
+                    alert("请输入标题");
+                    return;
+                }   
+                if (editor.getValue() == "") {
+                    alert("请输入文章内容");
+                    return;
                 }
-            });
+                if (releasetime.val() == "") {
+                    alert("请输入定时发布时间");
+                    return;
+                }
+
+                jQuery.ajax({
+                    url: '/art/releasetime',
+                    type: 'post',
+                    data: {"title":  title.val(), "content": editor.getValue(), "releaseTime": releasetime.val()},
+                    success: function(result) {
+                        if (result != null && result.statusCode == 200 && result.data == 1) {
+                            alert("定时发布成攻");
+                            location.href = "blog_time.html";
+                        } else {
+                            alert("定时发布失败，请重试！");
+                        }
+                    }
+                });
+            }
         }
 
-        function save() {
+        function draft() {
 
             if (confirm("是否保存为草稿？")) { 
                 var title = jQuery("#title")

@@ -17,11 +17,12 @@
 <body>
     <!-- 导航栏 -->
     <div class="nav">
-        <img src="img/logo2.jpg" alt="">
+        <img src="img/system.png" alt="">
         <span class="title">我的博客系统</span>
         <!-- 用来占据中间位置 -->
         <span class="spacer"></span>
         <a href="blog_list.html">主页</a>
+        <a href="myblog_list.html">个人主页</a>
         <a href="blog_add.html">写博客</a>
         <a href="javascript: logout()">退出登录</a>
     </div>
@@ -109,10 +110,10 @@
         getMyArticleList();
 
         function myDel(id) {
-            if (confirm("确认删除改草稿？")) {
+            if (confirm("确认删除草稿？")) {
                 // 删除草稿
                 jQuery.ajax({
-                    url: 'art/deldraft',
+                    url: 'art/delete',
                     type: 'post',
                     data: {"id": id},
                     success: function(result) {
