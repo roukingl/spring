@@ -22,4 +22,38 @@ public class UserService {
     public Userinfo getAuthorByIdService(Integer id) {
         return userMapper.getAuthorById(id);
     }
+
+    /**
+     * service 层
+     * 得到 id 用户的state
+     * @param id 用户 id
+     * @return 返回的 state
+     */
+    public int getUserStateService(Integer id) {
+        return userMapper.getUserState(id);
+    }
+
+    /**
+     * service 层
+     *  修改 state， freezetime， errornum
+     * @param userinfo 要修改的数据用户
+     * @return 返回受影响的行数
+     */
+    public int updateStateFreezetimeErrornum(Userinfo userinfo) {
+        return userMapper.updateUser(userinfo);
+    }
+
+    /**
+     * service 层
+     * 修改 errornum
+     * @param id 要修改的用户 id
+     * @param newErrornum 新的errornum
+     */
+    public void updateUserErrornumState(Integer id, Integer newErrornum, Integer newState) {
+        userMapper.updateUserErrornumState(id, newErrornum, newState);
+    }
+
+    public void updateUserErrornum(Integer id, Integer newErrornum) {
+        userMapper.updateUserErrornum(id, newErrornum);
+    }
 }

@@ -13,4 +13,20 @@
     <select id="getAuthorById" resultType="com.example.demo.entity.Userinfo">
         select * from userinfo where id = #{id}
     </select>
+
+    <select id="getUserState" resultType="java.lang.Integer">
+        select state from userinfo where id = #{id};
+    </select>
+
+    <update id="updateUser">
+        update userinfo set state = #{state}, freezetime = #{freezetime}, errornum = #{errornum} where id = #{id}
+    </update>
+
+    <update id="updateUserErrornumState">
+        update userinfo set errornum = #{errornum}, state = #{state} where id = #{id}
+    </update>
+    <update id="updateUserErrornum">
+        update userinfo set errornum = #{errornum} where id = #{id}
+    </update>
+
 </mapper>
