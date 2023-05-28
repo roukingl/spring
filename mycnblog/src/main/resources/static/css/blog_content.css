@@ -21,3 +21,33 @@
     text-indent: 2em;
     padding: 10px 0;
 }
+
+/* 评论标题 */
+.blog-comment h3 {
+    text-align: center;
+}
+
+.blog-comment #typing {
+    flex: 1;
+    width: 60%;
+    height: 8vh;
+    border: red;
+    font-size:xx-large;
+}
+
+.blog-comment #commend{
+    flex: 1;
+    width: 80%;
+}
+
+.blog-comment #btn{
+    width: 150px;
+    height: 70px;
+    border: none;
+    border-radius: 10px;
+    background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
+}
+
+.blog-comment p {
+    background-image: linear-gradient(to top, #fad0c4 0%, #fad0c4 1%, #ffd1ff 100%);
+}

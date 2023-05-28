@@ -8,7 +8,7 @@
     <title>博客正文</title>
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/blog_content.css">
-    <link rel="stylesheet" href="editor.md/css/editormd.preview.min.css" />
+    <link rel="stylesheet" href="editor.md/css/editormd.preview.min.css"/>
     <script src="js/jquery.min.js"></script>
     <script src="editor.md/editormd.js"></script>
     <script src="editor.md/lib/marked.min.js"></script>
@@ -17,117 +17,167 @@
 </head>
 
 <body>
-    <!-- 导航栏 -->
-    <div class="nav">
-        <img src="img/system.png" alt="">
-        <span class="title">我的博客系统</span>
-        <!-- 用来占据中间位置 -->
-        <span class="spacer"></span>
-        <a href="blog_list.html">主页</a>
-        <a href="myblog_list.html">个人主页</a>
-        <a href="blog_edit.html">写博客</a>
-        <a href="javascript: logout()">退出登录</a>
-    </div>
-    <!-- 版心 -->
-    <div class="container">
-        <!-- 左侧个人信息 -->
-        <div class="container-left">
-            <div class="card">
-                <img src="img/doge.jpg" class="avtar" alt="">
-                <h3 id="username"></h3>
-                <a href="http:www.github.com">github 地址</a>
-                <div class="counter">
-                    <span>文章</span>
-                    <span>分类</span>
-                </div>
-                <div class="counter">
-                    <span id="articleNumber"></span>
-                    <span>1</span>
-                </div>
+<!-- 导航栏 -->
+<div class="nav">
+    <img src="img/system.png" alt="">
+    <span class="title">我的博客系统</span>
+    <!-- 用来占据中间位置 -->
+    <span class="spacer"></span>
+    <a href="blog_list.html">主页</a>
+    <a href="myblog_list.html">个人主页</a>
+    <a href="blog_edit.html">写博客</a>
+    <a href="javascript: logout()">退出登录</a>
+</div>
+<!-- 版心 -->
+<div class="container">
+    <!-- 左侧个人信息 -->
+    <div class="container-left">
+        <div class="card">
+            <img src="img/doge.jpg" class="avtar" alt="">
+            <h3 id="username"></h3>
+            <a href="https://:www.github.com">github 地址</a>
+            <div class="counter">
+                <span>文章</span>
+                <span>分类</span>
             </div>
-        </div>
-        <!-- 右侧内容详情 -->
-        <div class="container-right">
-            <div class="blog-content">
-                <!-- 博客标题 -->
-                <h3 id="title"></h3>
-                <!-- 博客时间 -->
-                <div class="date">
-                    发布时间：<span id="updatetime"></span>&nbsp;
-                    阅读量：<span id="rcount"></span>
-                </div>
-                
-                <!-- 博客正文 -->
-                <div id="editorDiv">
-
-                </div>
+            <div class="counter">
+                <span id="articleNumber"></span>
+                <span>1</span>
             </div>
         </div>
     </div>
-    <script type="text/javascript">
-            var editormd;
-            function initEdit(md){
-                editormd = editormd.markdownToHTML("editorDiv", {
-                markdown : md, // Also, you can dynamic set Markdown text
-                // htmlDecode : true,  // Enable / disable HTML tag encode.
-                // htmlDecode : "style,script,iframe",  // Note: If enabled, you should filter some dangerous HTML tags for website security.
-                });
-            }
+    <!-- 右侧内容详情 -->
+    <div class="container-right">
+        <div class="blog-content">
+            <!-- 博客标题 -->
+            <h3 id="title"></h3>
+            <!-- 博客时间 -->
+            <div class="date">
+                发布时间：<span id="updatetime"></span>&nbsp;
+                阅读量：<span id="rcount"></span>
+            </div>
 
-            function getArticleDetail(id) {
-                jQuery.ajax({
-                    url: 'art/detail',
-                    type: 'post',
-                    data: {"id": id},
-                    success: function(result) {
-                        if (result != null && result.statusCode == 200) {
-                            jQuery("#title").html(result.data.title);
-                            jQuery("#updatetime").html(result.data.updatetime);
-                            jQuery("#rcount").html(result.data.rcount);
-                            initEdit(result.data.content);
-                            // 得到作者详细信息
-                            showUser(result.data.uid);
-                            // 每得到信息是都更新rcount
-                            updataRCount();
-                        } else {
-                            alert("查询失败，请重试");
-                        }
-                    }
-                });
-            }
-            
-            getArticleDetail(getUrlValue("id"));
+            <!-- 博客正文 -->
+            <div id="editorDiv">
 
-            function showUser(id) {
-                jQuery.ajax({
-                    url: 'user/showauthor',
-                    type: 'post',
-                    data: {"id": id},
-                    success: function(result) {
-                        if (result != null && result.statusCode == 200 && result.data.articleNumber > 0) {
-                            jQuery("#username").text(result.data.username);
-                            jQuery("#articleNumber").text(result.data.articleNumber);
-                        } else {
-                            alert("作者查询失败，请重试");
-                        }
-                    }
-                });
-            }
+            </div>
+        </div>
+        <div class="blog-comment">
+            <h3>评论区</h3>
+            <hr><br>
+            <span>
+                <label for="typing"></label><textarea id="typing">输入文字</textarea>
+            </span>
+            <span>
+                <button id="btn" onclick="send()">发送评论</button>
+            </span>
+            <div id="commend"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var editormd;
 
-            function updataRCount() {
-                var id = getUrlValue("id");
-                if (id != "") {
-                    jQuery.ajax({
-                        url: '/art/uprcount',
-                        type: 'post',
-                        data: {"id": id},
-                        success: function(result) {}
-                    });
+    function initEdit(md) {
+        editormd = editormd.markdownToHTML("editorDiv", {
+            markdown: md, // Also, you can dynamic set Markdown text
+            // htmlDecode : true,  // Enable / disable HTML tag encode.
+            // htmlDecode : "style,script,iframe",  // Note: If enabled, you should filter some dangerous HTML tags for website security.
+        });
+    }
+
+    function getArticleDetail(id) {
+        jQuery.ajax({
+            url: 'art/detail',
+            type: 'post',
+            data: {"id": id},
+            success: function (result) {
+                if (result != null && result.statusCode == 200) {
+                    jQuery("#title").html(result.data.title);
+                    jQuery("#updatetime").html(result.data.updatetime);
+                    jQuery("#rcount").html(result.data.rcount);
+                    initEdit(result.data.content);
+                    // 得到作者详细信息
+                    showUser(result.data.uid);
+                    // 得到这篇博客的评论
+                    showComment(id);
+                    // 每得到信息是都更新rcount
+                    updataRCount();
+                } else {
+                    alert("查询失败，请重试");
                 }
             }
+        });
+    }
+    getArticleDetail(getUrlValue("id"));
 
-            
-    </script> 
+    function send() {
+        var time = new Date();
+        var value = document.getElementById("typing").value;//获得文本框里的内容
+        var p = document.createElement("p");//创建新元素，也即结点
+        p.innerHTML = '<hr>' + value + time.toUTCString();//往结点里塞内容
+        document.getElementById("commend").prepend(p); //向指定内容（此处是id"commend"）里添加子节点，作为第一个结点。
+        var id = getUrlValue("id");
+
+        jQuery.ajax({
+            url: '/comment/add',
+            type: 'post',
+            data: {"content": value},
+            success: function (result) {
+                if (result != null && result.statusCode == 200 && result.data == 1) {
+                    // 添加评论在最上面
+                    showComment(id);
+                } else {
+                    alert("评论失败！请重试");
+                }
+            }
+        });
+    }
+
+    function showComment(id) {
+        jQuery.ajax({
+            url: '/comment/showcomment',
+            type: 'post',
+            data: {"id": id},
+            success: function(result) {
+                if (result != null && result.statusCode == 200 && result.data != null) {
+
+                }
+            }
+        });
+    }
+
+    function showUser(id) {
+        jQuery.ajax({
+            url: '/user/showauthor',
+            type: 'post',
+            data: {"id": id},
+            success: function (result) {
+                if (result != null && result.statusCode == 200 && result.data.articleNumber > 0) {
+                    jQuery("#username").text(result.data.username);
+                    jQuery("#articleNumber").text(result.data.articleNumber);
+                } else {
+                    alert("作者查询失败，请重试");
+                }
+            }
+        });
+    }
+
+    function updataRCount() {
+        var id = getUrlValue("id");
+        if (id != "") {
+            jQuery.ajax({
+                url: '/art/uprcount',
+                type: 'post',
+                data: {"id": id},
+                success: function (result) {
+                }
+            });
+        }
+    }
+
+
+</script>
 </body>
 
 </html>

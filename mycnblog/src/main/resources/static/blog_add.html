@@ -21,7 +21,7 @@
 <body>
     <!-- 导航栏 -->
     <div class="nav">
-        <img src="img/system.png">
+        <img src="img/system.png" alt="">
         <span class="title">我的博客系统</span>
         <!-- 用来占据中间位置 -->
         <span class="spacer"></span>
@@ -34,20 +34,21 @@
     <div class="blog-edit-container">
         <!-- 标题编辑区 -->
         <div class="title">
-            <input type="text" id="title" placeholder="在这里写下文章标题">&nbsp&nbsp
+            <input type="text" id="title" placeholder="在这里写下文章标题"><label for="title">&nbsp&nbsp</label>
             <button onclick="draft()">保存草稿</button>&nbsp&nbsp
             <button onclick="time()">定时发布</button>&nbsp&nbsp
-            <input type="text" id="releasetime" style="width: 420px;" placeholder="格式如:2/30表示两小时三十分钟后发布">&nbsp&nbsp
+            <label for="releasetime">&nbsp&nbsp</label><input type="text" id="releasetime" style="width: 420px;" placeholder="格式如:2/30表示两小时三十分钟后发布">&nbsp&nbsp
             <button onclick="mysub()">发布文章</button>
         </div>
         <!-- 创建编辑器标签 -->
         <div id="editorDiv">
-            <textarea id="editor-markdown" style="display:none;"></textarea>
+            <label for="editor-markdown"></label><textarea id="editor-markdown" style="display:none;"></textarea>
         </div>
     </div>
 
     <script>
-        var editor;
+        let editor;
+
         function initEdit(md){
             // 编辑器设置
             editor = editormd("editorDiv", {
@@ -67,18 +68,18 @@
         function time() {
 
             if (confirm("是否定时发布？")) {
-                var releasetime = jQuery("#releasetime");
-                var title = jQuery("#title");
+                let releasetime = jQuery("#releasetime");
+                let title = jQuery("#title");
 
-                if (title.val() == "") {
+                if (title.val() === "") {
                     alert("请输入标题");
                     return;
                 }   
-                if (editor.getValue() == "") {
+                if (editor.getValue() === "") {
                     alert("请输入文章内容");
                     return;
                 }
-                if (releasetime.val() == "") {
+                if (releasetime.val() === "") {
                     alert("请输入定时发布时间");
                     return;
                 }
@@ -88,7 +89,7 @@
                     type: 'post',
                     data: {"title":  title.val(), "content": editor.getValue(), "releaseTime": releasetime.val()},
                     success: function(result) {
-                        if (result != null && result.statusCode == 200 && result.data == 1) {
+                        if (result != null && result.statusCode === 200 && result.data === 1) {
                             alert("定时发布成攻");
                             location.href = "blog_time.html";
                         } else {
@@ -101,15 +102,15 @@
 
         function draft() {
 
-            if (confirm("是否保存为草稿？")) { 
-                var title = jQuery("#title")
+            if (confirm("是否保存为草稿？")) {
+                let title = jQuery("#title");
 
                 jQuery.ajax({
                     url: '/art/draft',
                     type: 'post',
                     data: {"title": title.val(), "content": editor.getValue()},
                     success: function(result) {
-                        if (result != null && result.statusCode == 200 && result.data == 1) {
+                        if (result != null && result.statusCode === 200 && result.data === 1) {
                             alert("保存成功！");
                             location.href = "draftblog.html";
                         } else {
@@ -125,12 +126,12 @@
             // alert(editor.getValue()); // 获取值
             // editor.setValue("#123") // 设置值
             if (confirm("确认提交？")) {
-                var title = jQuery("#title");
-                if (title.val() == "") {
+                let title = jQuery("#title");
+                if (title.val() === "") {
                     alert("请输入标题");
                     return;
                 }
-                if (editor.getValue() == "") {
+                if (editor.getValue() === "") {
                     alert("请输入文章正文");
                     return;
                 }
@@ -139,7 +140,7 @@
                     type: 'post',
                     data: {"title": title.val(), "content": editor.getValue()},
                     success: function(result) {
-                        if (result != null && result.statusCode == 200 && result.data == 1) {
+                        if (result != null && result.statusCode === 200 && result.data === 1) {
                             if (confirm("添加成功，是否继续添加？")) {
                                 location.href = location.href;
                             } else {
