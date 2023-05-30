@@ -2,14 +2,17 @@ package com.example.demo.mapper;
 
 import com.example.demo.entity.Commentinfo;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface CommentMapper {
 
-    /**
-     * 插入评论
-     * @param commentinfo 要插入的评论数据
-     * @return 返回受影响的行数
-     */
+
     int insertComment(Commentinfo commentinfo);
+
+    List<Commentinfo> selectComments(@Param("articleId") Integer articleId);
+
+    String selectUsernameByUid(@Param("userId") Integer userId);
 }

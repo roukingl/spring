@@ -21,16 +21,11 @@ public class AppConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/draft_list.html")
                 .excludePathPatterns("/art/detail")
                 .excludePathPatterns("/art/uprcount")
-                .excludePathPatterns("/art/draft")
-                .excludePathPatterns("/art/save")
-                .excludePathPatterns("/art/deldraft")
-                .excludePathPatterns("/art/draftlist")
                 .excludePathPatterns("/art/listpage")
-                .excludePathPatterns("/art/releasetime")
-                .excludePathPatterns("/art/timelist")
-                .excludePathPatterns("/art/publishnow")
                 .excludePathPatterns("/user/showauthor")
                 .excludePathPatterns("/user/reg")
-                .excludePathPatterns("/user/login");
+                .excludePathPatterns("/user/login")
+                .excludePathPatterns("/comment/showcomment")
+                .excludePathPatterns("/comment/add");
     }
 }

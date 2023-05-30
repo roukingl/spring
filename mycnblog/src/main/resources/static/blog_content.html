@@ -63,15 +63,20 @@
             </div>
         </div>
         <div class="blog-comment">
-            <h3>评论区</h3>
-            <hr><br>
-            <span>
-                <label for="typing"></label><textarea id="typing">输入文字</textarea>
-            </span>
-            <span>
-                <button id="btn" onclick="send()">发送评论</button>
-            </span>
-            <div id="commend"></div>
+            <div>
+                <h3>评论区</h3>
+                <br>
+                <hr>
+                <br>
+            </div>
+            <div class="fun">
+                <span class="comment-tying"><label for="typing"></label><textarea id="typing" placeholder="请写下你的评论"></textarea></span>&nbsp;&nbsp;
+                <span class="comment-button"><button id="btn" onclick="send()">发送评论</button></span>
+            </div>
+            <br>
+            <div id="comment">
+
+            </div>
         </div>
     </div>
 </div>
@@ -109,24 +114,26 @@
             }
         });
     }
+
     getArticleDetail(getUrlValue("id"));
 
     function send() {
-        var time = new Date();
-        var value = document.getElementById("typing").value;//获得文本框里的内容
-        var p = document.createElement("p");//创建新元素，也即结点
-        p.innerHTML = '<hr>' + value + time.toUTCString();//往结点里塞内容
-        document.getElementById("commend").prepend(p); //向指定内容（此处是id"commend"）里添加子节点，作为第一个结点。
-        var id = getUrlValue("id");
+
+        var content = document.getElementById("typing").value;
+
+        var articleId = getUrlValue("id");
 
         jQuery.ajax({
             url: '/comment/add',
             type: 'post',
-            data: {"content": value},
+            data: {"content": content, "articleid": articleId},
             success: function (result) {
                 if (result != null && result.statusCode == 200 && result.data == 1) {
                     // 添加评论在最上面
                     showComment(id);
+                    location.href = location.href;
+                }  else if (result != null && result.statusCode == -1) {
+                    alert("请登录评论！");
                 } else {
                     alert("评论失败！请重试");
                 }
@@ -139,9 +146,21 @@
             url: '/comment/showcomment',
             type: 'post',
             data: {"id": id},
-            success: function(result) {
+            success: function (result) {
                 if (result != null && result.statusCode == 200 && result.data != null) {
-
+                    var commentHtml = "";
+                    var comments = result.data.commentList;
+                    var usernames = result.data.usernameList;
+                    for (var i = 0; i < usernames.length; i++) {
+                        var comment = comments[i];
+                        var username = usernames[i];
+                        commentHtml += '<p class="para">' + '<br>' +
+                            username + ": " + '<br>' + '<br>' +
+                            comment.content + '<br>' + '<br>' +
+                            comment.createtime + '<br>' + '<br>' + '</p>';
+                        // 点赞功能，显示头像，进入主页
+                    }
+                    jQuery("#comment").html(commentHtml);
                 }
             }
         });
@@ -175,7 +194,6 @@
             });
         }
     }
-
 
 </script>
 </body>

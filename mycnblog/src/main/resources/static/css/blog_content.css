@@ -22,6 +22,10 @@
     padding: 10px 0;
 }
 
+.blog-comment .fun{
+    display: flex;
+}
+
 /* 评论标题 */
 .blog-comment h3 {
     text-align: center;
@@ -35,7 +39,7 @@
     font-size:xx-large;
 }
 
-.blog-comment #commend{
+.blog-comment #comment{
     flex: 1;
     width: 80%;
 }
@@ -48,6 +52,10 @@
     background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
 }
 
-.blog-comment p {
+.para {
     background-image: linear-gradient(to top, #fad0c4 0%, #fad0c4 1%, #ffd1ff 100%);
+}
+
+.blog-comment .comment-button {
+    align-items: center;
 }

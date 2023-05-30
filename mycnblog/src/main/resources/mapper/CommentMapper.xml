@@ -3,6 +3,14 @@
 <mapper namespace="com.example.demo.mapper.CommentMapper">
 
     <insert id="insertComment">
-        insert into commentinfo(content, uid) values (#{content}, #{uid})
+        insert into commentinfo(content, articleid, uid) values (#{content}, #{articleid}, #{uid})
     </insert>
+
+    <select id="selectComments" resultType="com.example.demo.entity.Commentinfo">
+        select * from commentinfo where articleid = #{articleId}
+    </select>
+
+    <select id="selectUsernameByUid" resultType="java.lang.String">
+        select username from userinfo where id = #{userId};
+    </select>
 </mapper>

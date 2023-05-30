@@ -7,13 +7,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-@EnableScheduling
+//@EnableScheduling
 public class RegularCheck {
 
     @Autowired
     private ArticleService articleService;
 
-    @Scheduled(cron = "0/3 * * * * ? ")
+//    @Scheduled(cron = "0/3 * * * * ? ")
     public void RegularCheckArticleService() {
         articleService.checkArticleTime();
     }

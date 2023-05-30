@@ -8,9 +8,11 @@ import com.example.demo.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/comment")
@@ -39,5 +41,14 @@ public class CommentController {
         }
         int row = commentService.addCommentService(commentinfo, userinfo);
         return AjaxResult.success(row);
+    }
+
+    @RequestMapping("/showcomment")
+    public AjaxResult showComments(@RequestParam("id") Integer articleId) {
+        if (articleId == null || articleId <= 0) {
+            return AjaxResult.fail(0, "参数错误");
+        }
+        HashMap<String, Object> listMap = commentService.showCommentsService(articleId);
+        return AjaxResult.success(listMap);
     }
 }
