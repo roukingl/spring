@@ -47,4 +47,6 @@ public interface ArticleMapper {
     int publishNowArticle(@Param("id") Integer id, @Param("uid") Integer uid);
 
     int publishCheckTime(Articleinfo articleinfo);
+
+    List<Articleinfo> initGetArticleList(@Param("state") Integer state, @Param("uid") Integer uid);
 }

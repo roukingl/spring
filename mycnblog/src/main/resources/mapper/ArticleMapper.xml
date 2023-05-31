@@ -68,4 +68,8 @@
     <update id="publishCheckTime">
         update articleinfo set state = 0 where id = #{id}
     </update>
+
+    <select id="initGetArticleList" resultType="com.example.demo.entity.Articleinfo">
+        select * from articleinfo where state = #{state} and uid = #{uid}
+    </select>
 </mapper>

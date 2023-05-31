@@ -56,4 +56,23 @@ public class UserService {
     public void updateUserErrornum(Integer id, Integer newErrornum) {
         userMapper.updateUserErrornum(id, newErrornum);
     }
+
+
+    /**
+     * service层 根据用户 id 来查找密码
+     * @param id 用户 id
+     * @return 返回数据库中的加密密码
+     */
+    public String getUserPassword(Integer id) {
+        return userMapper.selectUserPassword(id);
+    }
+
+    /**
+     * service层 修改当前用户的密码
+     * @param userinfo 当前用户
+     * @return 返回受影响的行数
+     */
+    public int updateUserPasswordService(Userinfo userinfo) {
+        return userMapper.updateUserPassword(userinfo.getId(), userinfo.getPassword());
+    }
 }

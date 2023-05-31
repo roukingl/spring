@@ -122,4 +122,8 @@ public class ArticleService {
     public int publishNowService(Integer id, Userinfo userinfo) {
         return articleMapper.publishNowArticle(id, userinfo.getId());
     }
+
+    public List<Articleinfo> initGetArticleListService(Integer blogState, Userinfo userinfo) {
+        return articleMapper.initGetArticleList(blogState, userinfo.getId());
+    }
 }

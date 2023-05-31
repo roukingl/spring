@@ -25,8 +25,16 @@
     <update id="updateUserErrornumState">
         update userinfo set errornum = #{errornum}, state = #{state} where id = #{id}
     </update>
+
     <update id="updateUserErrornum">
         update userinfo set errornum = #{errornum} where id = #{id}
     </update>
 
+    <select id="selectUserPassword" resultType="java.lang.String">
+        select password from userinfo where id = #{id}
+    </select>
+
+    <update id="updateUserPassword">
+        update userinfo set password = #{password} where id = #{id}
+    </update>
 </mapper>

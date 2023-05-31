@@ -8,6 +8,7 @@ import com.example.demo.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -195,6 +196,25 @@ public class ArticleController {
         }
         int row = articleService.publishNowService(id, userinfo);
         return AjaxResult.success(row);
+    }
+
+    /**
+     * 前端使用了 amis 框架
+     * 返回借口是{ status, msg, data} 当 status == 0 表示成功, 从前端进行适配
+     * @param blogState 前端传来的 json，表示为博客的类型
+     * @return 返回 AjaxResult
+     */
+    @RequestMapping("/initbloglist")
+    public AjaxResult initGetBlogList(@RequestBody @RequestParam("blogState") Integer blogState, HttpServletRequest request) {
+        if (blogState == null || blogState < 0) {
+            return AjaxResult.fail(0, "参数错误");
+        }
+        Userinfo userinfo = UserSessionUtils.getUser(request);
+        if (userinfo == null) {
+            return AjaxResult.fail(-1, "非法访问");
+        }
+        List<Articleinfo> artList = articleService.initGetArticleListService(blogState, userinfo);
+        return AjaxResult.success(artList);
     }
 
 }

@@ -41,4 +41,7 @@ public interface UserMapper {
 
     void updateUserErrornum(@Param("id")Integer id, @Param("errornum") Integer errornum);
 
+    String selectUserPassword(@Param("id") Integer id);
+
+    int updateUserPassword(@Param("id") Integer id, @Param("password") String password);
 }

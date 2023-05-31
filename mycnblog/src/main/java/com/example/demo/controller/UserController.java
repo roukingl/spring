@@ -69,7 +69,7 @@ public class UserController {
                     try {
                         lock.wait(FreezeTimeEnum.getFreezeTimeList().get(state) * 1000);
                         userService.updateUserErrornumState(userinfo.getId(), 0,
-                                (userinfo.getState()) < 2 ? userinfo.getState() + 1: 2);
+                                (userinfo.getState()) < 2 ? userinfo.getState() + 1 : 2);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -82,15 +82,15 @@ public class UserController {
             // 2. 当erronum 大于 5 时，返回剩余冻结时间
             String[] times = userinfo.getFreezetime().toString().split("T");
             Date date = simpleDateFormat.parse(times[0] + " " + times[1]);
-            long time = (date.getTime() +  freezeTimeMap.get(state) - System.currentTimeMillis()) / 1000;
+            long time = (date.getTime() + freezeTimeMap.get(state) - System.currentTimeMillis()) / 1000;
             String responseTime;
-            if ( time > 60) {
+            if (time > 60) {
                 responseTime = (int) (time / 60) + "分钟  ";
                 responseTime += time % 60 + "秒";
             } else {
                 responseTime = (int) time + "秒";
             }
-            return AjaxResult.fail(1, "账号已被冻结，请 "+ responseTime + " 后重试");
+            return AjaxResult.fail(1, "账号已被冻结，请 " + responseTime + " 后重试");
         }
 
         // 3. 没达到设定的 5 次就再次判断密码是否正确
@@ -143,5 +143,24 @@ public class UserController {
         BeanUtils.copyProperties(userinfo, userinfoVO);
         userinfoVO.setArticleNumber(articleService.getArticleNumberService(id));
         return AjaxResult.success(userinfoVO);
+    }
+
+    @RequestMapping("updatepass")
+    public AjaxResult updatePassword(String beforePassword, String afterPassword, HttpServletRequest request) {
+        if (!StringUtils.hasLength(beforePassword)
+            || !StringUtils.hasLength(afterPassword) || afterPassword.length() < 6) {
+            return AjaxResult.fail(0, "参数错误");
+        }
+        Userinfo userinfo = UserSessionUtils.getUser(request);
+        if (userinfo == null) {
+            return AjaxResult.fail(-1, "非法访问");
+        }
+        String databasePassword = userService.getUserPassword(userinfo.getId());
+        if (!PasswordUtils.passwordDecrypt(beforePassword, databasePassword)) {
+            return AjaxResult.fail(0, "密码输入错误，请重新输入");
+        }
+        userinfo.setPassword(PasswordUtils.passwordEncrypt(afterPassword));
+        int row = userService.updateUserPasswordService(userinfo);
+        return AjaxResult.success(row);
     }
 }

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心</title>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/common.js"></script>
+    <link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+    <div class="nav">
+        <img src="img/system.png" alt="">
+        <span class="title">我的博客系统</span>
+        <!-- 用来占据中间位置 -->
+        <span class="spacer"></span>
+        <a href="blog_list.html">主页</a>
+        <a href="myblog_list.html">博客列表</a>
+        <a href="blog_add.html">写博客</a>
+        <a href="javascript: logout()">退出登录</a>
+    </div>
+    <div class="fun">
+        <div class="update-password">
+            <h1>修改密码</h1><br>
+            原密码：<label for="before-password"></label><input id="before-password" type="text" placeholder="请输入原密码" autocomplete="off">
+            <br><br>
+            新密码：<label for="after-password"></label><input id="after-password" type="password" placeholder="请输入大于6位的新密码" autocomplete="off">
+            <br><br>
+            <button onclick="subPass()">提交数据</button>
+        </div>
+        <br><hr>
+        <div class="update-github">
+            <h1>修改github网址</h1><br>
+            <div id="github">
+                <div id="before-github">
+
+                </div>
+                <div id="after-github">
+                    新网址：<label for="afterGithub"></label><input id="afterGithub" type="text" placeholder="请输入要修改的github地址">
+                    <button onclick="subUrl()">提交数据</button>
+                </div>
+            </div>
+        </div>
+        <div class="update-avatar">
+
+        </div>
+    </div>
+
+    <script>
+        function getUrl() {
+
+            jQuery.ajax({
+                url: 'user/geturl',
+                type: 'post',
+                data: {},
+                success: function (result) {
+                    if (result != null && result.statusCode == 200 && result.data != null) {
+                        var githubUrl = "原网站：" + result.data ;
+                        jQuery("#before-github").text(githubUrl);
+                    }
+                }
+            });
+        }
+        getUrl();
+
+        function subUrl() {
+            jQuery.ajax({
+                url: 'user/updateurl',
+                type: 'post',
+                data: {},
+                success: function (result) {
+                    if (result!= null && result.statusCode == 200 && result.data!= null) {
+                        var githubUrl = "原网站：" + result.data ;
+                        jQuery("#after-github").text(githubUrl);
+                    } else {
+                        alert("修改失败");
+                    }
+                }
+            });
+        }
+
+        function subPass() {
+            var beforePassword = jQuery("#before-password").val();
+            var afterPassword = jQuery("#after-password").val();
+
+            if (beforePassword == "") {
+                alert("请输入原密码");
+            }
+            if (afterPassword == "") {
+                alert("请输入新密码");
+            }
+
+            jQuery.ajax({
+                url: '/user/updatepass',
+                type: 'post',
+                data: {"beforePassword": beforePassword, "afterPassword": afterPassword},
+                success: function (result) {
+                    if (result != null && result.statusCode == 200 && result.data == 1) {
+                        alert("修改密码成功！");
+                        location.href = '/login.html';
+                    } else if (result != null && (result.statusCode == 0 || result.statusCode == -1)) {
+                        alert(result.statusCodeDescription);
+                    } else {
+                        alert("未知错误请重试");
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
