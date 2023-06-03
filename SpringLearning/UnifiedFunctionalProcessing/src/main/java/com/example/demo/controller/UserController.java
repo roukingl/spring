@@ -23,6 +23,7 @@ public class UserController {
     @RequestMapping("/login")
     public String login() {
         System.out.println("login~");
+        int i = 10 / 0;
         return "login~";
     }
 

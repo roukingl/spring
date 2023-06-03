@@ -6,7 +6,7 @@
         insert into userinfo(username, password) values (#{username}, #{password})
     </insert>
 
-    <select id="selectUserById" resultType="java.lang.String">
-        select password from userinfo where username = #{username};
+    <select id="selectUserByName" resultType="com.example.java_gobang.entity.User">
+        select * from userinfo where username = #{username};
     </select>
 </mapper>

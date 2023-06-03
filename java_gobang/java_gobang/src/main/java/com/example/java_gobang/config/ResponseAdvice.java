@@ -1,6 +1,6 @@
-package com.example.demo.config;
+package com.example.java_gobang.config;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.example.java_gobang.common.AjaxResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,11 +9,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import java.util.HashMap;
-
 @ControllerAdvice
+@ResponseBody
 public class ResponseAdvice implements ResponseBodyAdvice {
 
     @Autowired

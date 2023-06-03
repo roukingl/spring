@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏大厅</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/game_hall.css">
+</head>
+<body>
+<div class="nav">五子棋对战</div>
+<!-- 整个页面的容器元素 -->
+<div class="container">
+    <!-- 这个 div 在 container 中是处于垂直水平居中这样的位置的 -->
+    <div>
+        <!-- 展示用户信息 -->
+        <div id="screen"></div>
+        <!-- 匹配按钮 -->
+        <div id="match-button">开始匹配</div>
+    </div>
+</div>
+
+<script src="js/jquery.min.js"></script>
+<script>
+    function initUser() {
+        // 进行游戏大厅初始化，查询该用户信息
+        jQuery.ajax({
+            url: '/user/showuser',
+            type: 'post',
+            data: {},
+            success: function (result) {
+                if (result != null && result.status == 200 && result.data != null) {
+                    // 查询成功，添加到页面上
+                    var information = "";
+                    var person = result.data;
+                    information += "用户名：" + person.username + " 天梯积分：" + person.score +
+                                    " <br>" + "总场次：" + person.total_count + " 胜利场次：" + person.win_count;
+                    jQuery("#screen").html(information);
+                } else {
+                    // 查询失败
+                    alert("信息查询失败，请重试！");
+                }
+            }
+        });
+    }
+    initUser();
+
+</script>
+</body>
+</html>

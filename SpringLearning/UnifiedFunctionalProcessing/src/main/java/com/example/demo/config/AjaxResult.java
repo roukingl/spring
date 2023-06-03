@@ -1,4 +1,4 @@
-package com.example.java_gobang.common;
+package com.example.demo.config;
 
 import lombok.Data;
 
@@ -24,18 +24,18 @@ public class AjaxResult implements Serializable {
         return ajaxResult;
     }
 
-    public static AjaxResult success(int status, Object data) {
+    public static AjaxResult success(int statusCode, Object data) {
         AjaxResult ajaxResult = new AjaxResult();
-        ajaxResult.setStatus(status);
+        ajaxResult.setStatus(statusCode);
         ajaxResult.setStatusMsg("");
         ajaxResult.setData(data);
         return ajaxResult;
     }
 
-    public static AjaxResult success(int status, String statusMsg, Object data) {
+    public static AjaxResult success(int statusCode, String statusCodeDescription, Object data) {
         AjaxResult ajaxResult = new AjaxResult();
-        ajaxResult.setStatus(status);
-        ajaxResult.setStatusMsg(statusMsg);
+        ajaxResult.setStatus(statusCode);
+        ajaxResult.setStatusMsg(statusCodeDescription);
         ajaxResult.setData(data);
         return ajaxResult;
     }
@@ -43,18 +43,18 @@ public class AjaxResult implements Serializable {
     /**
      * 失败调用的函数
      */
-    public static AjaxResult fail(int status, String statusMsg) {
+    public static AjaxResult fail(int statusCode, String statusCodeDescription) {
         AjaxResult ajaxResult = new AjaxResult();
-        ajaxResult.setStatus(status);
-        ajaxResult.setStatusMsg(statusMsg);
+        ajaxResult.setStatus(statusCode);
+        ajaxResult.setStatusMsg(statusCodeDescription);
         ajaxResult.setData(null);
         return ajaxResult;
     }
 
-    public static AjaxResult fail(int status, String statusMsg, Object data) {
+    public static AjaxResult fail(int statusCode, String statusCodeDescription, Object data) {
         AjaxResult ajaxResult = new AjaxResult();
-        ajaxResult.setStatus(status);
-        ajaxResult.setStatusMsg(statusMsg);
+        ajaxResult.setStatus(statusCode);
+        ajaxResult.setStatusMsg(statusCodeDescription);
         ajaxResult.setData(data);
         return ajaxResult;
     }
