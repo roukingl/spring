@@ -1,6 +1,6 @@
 package com.example.demo.config;
 
-import com.example.demo.comon.AjaxResult;
+import com.example.demo.common.AjaxResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;

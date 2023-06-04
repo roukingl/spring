@@ -1,4 +1,4 @@
-package com.example.demo.comon;
+package com.example.demo.common;
 
 import com.example.demo.entity.Userinfo;
 
@@ -11,10 +11,9 @@ import javax.servlet.http.HttpSession;
 public class UserSessionUtils {
 
     /**
-     * 通过请求sessionid得到当前用户返回
-     *
-     * @param request
-     * @return
+     * 通过请求 sessionId 得到当前用户返回
+     * @param request 从客户端得到的请求
+     * @return 返回从该请求session中得到的用户
      */
     public static Userinfo getUser(HttpServletRequest request) {
         HttpSession session = request.getSession(false);

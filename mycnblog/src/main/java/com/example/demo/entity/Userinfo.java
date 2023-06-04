@@ -13,11 +13,11 @@ public class Userinfo implements Serializable {
     private String password;
     private String photo;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private LocalDateTime createtime;
+    private LocalDateTime create_time;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private LocalDateTime updatetime;
+    private LocalDateTime update_time;
     private Integer state;
-    private Integer errornum;
+    private Integer error_number;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private LocalDateTime freezetime;
+    private LocalDateTime freeze_time;
 }

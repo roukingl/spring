@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.comon.AjaxResult;
-import com.example.demo.comon.UserSessionUtils;
+import com.example.demo.common.AjaxResult;
+import com.example.demo.common.UserSessionUtils;
 import com.example.demo.entity.Commentinfo;
 import com.example.demo.entity.Userinfo;
 import com.example.demo.service.CommentService;

@@ -93,7 +93,7 @@
 
     function getArticleDetail(id) {
         jQuery.ajax({
-            url: 'art/detail',
+            url: '/art/detail',
             type: 'post',
             data: {"id": id},
             success: function (result) {

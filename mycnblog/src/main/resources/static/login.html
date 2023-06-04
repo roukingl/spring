@@ -61,7 +61,7 @@
                 type: 'post',
                 data: {"username": username.val(), "password": password.val()},
                 success: function(result) {
-                    if (result != null && result.statusCode == 200 && result.data != null) {
+                    if (result != null && result.statusCode == 200 && result.data == 1) {
                         // 登录成功
                         location.href = "myblog_list.html";
                     } else if (result != null && result.statusCode == 1 && result.statusCodeDescription != null) {

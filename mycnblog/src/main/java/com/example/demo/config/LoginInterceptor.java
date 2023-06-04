@@ -1,6 +1,6 @@
 package com.example.demo.config;
 
-import com.example.demo.comon.AppVariable;
+import com.example.demo.common.AppVariable;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
