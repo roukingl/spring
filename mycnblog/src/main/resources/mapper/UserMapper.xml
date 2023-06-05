@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.demo.mapper.UserMapper">
+<mapper namespace="com.example.mycnblog.mapper.UserMapper">
 
     <!--suppress SqlInsertValues -->
     <insert id="insertUser">
         insert into userinfo(username, password) values (#{username}, #{password})
     </insert>
 
-    <select id="getUserByName" resultType="com.example.demo.entity.Userinfo">
+    <select id="getUserByName" resultType="com.example.mycnblog.entity.Userinfo">
         select *  from userinfo where username = #{username}
     </select>
 
-    <select id="getAuthorById" resultType="com.example.demo.entity.Userinfo">
+    <select id="getAuthorById" resultType="com.example.mycnblog.entity.Userinfo">
         select * from userinfo where id = #{id}
     </select>
 
     <update id="updateUserLoginParameters">
-        update userinfo set state = #{state}, freezetime = #{freeze_time}, errornum = #{error_number} where id = #{id}
+        update userinfo set state = #{state}, freeze_time = #{freeze_time}, error_number = #{error_number} where id = #{id}
     </update>
 
     <update id="updateUserError_numberState">
-        update userinfo set errornum = #{error_number}, state = #{state} where id = #{id}
+        update userinfo set error_number = #{error_number}, state = #{state} where id = #{id}
     </update>
 
     <update id="updateUserError_number">
-        update userinfo set errornum = #{error_number} where id = #{id}
+        update userinfo set error_number = #{error_number} where id = #{id}
     </update>
 
     <select id="selectUserPassword" resultType="java.lang.String">

@@ -23,6 +23,7 @@
         <a href="person.html">资料修改</a>
         <a href="draft_list.html">草稿</a>
         <a href="blog_time.html">定时博客</a>
+        <a href="blog_already_delete.html">博客删除记录</a>
         <a href="blog_add.html">写博客</a>
         <a href="javascript: logout()">退出登录</a>
     </div>
@@ -56,9 +57,9 @@
             jQuery.ajax({
                 url: '/user/showinfo',
                 type: 'post',
-                data: {},
+                data: {"state": 0},
                 success: function(result) {
-                    if (result != null && result.statusCode == 200) {
+                    if (result != null && result.statusCode == 200 && result.data != null) {
                         jQuery("#username").text(result.data.username);
                         jQuery("#articleNumber").text(result.data.articleNumber);
                     } else {
@@ -115,7 +116,7 @@
             if (confirm("确认删除改文章？")) {
                 // 删除文章
                 jQuery.ajax({
-                    url: 'art/delete',
+                    url: '/art/delete',
                     type: 'post',
                     data: {"id": id},
                     success: function(result) {

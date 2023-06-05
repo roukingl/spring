@@ -4,9 +4,9 @@ server:
       timeout: 1800
 
 spring:
-#  jackson:
-#    date-format: 'yyyy-MM-dd HH:mm:ss'
-#    time-zone: 'GTM+8'
+  #  jackson:
+  #    date-format: 'yyyy-MM-dd HH:mm:ss'
+  #    time-zone: 'GTM+8'
   # 配置 redis
   redis:
     database: 15
@@ -36,4 +36,4 @@ logging:
   level:
     com:
       example:
-        demo: debug
+        mycnblog: debug

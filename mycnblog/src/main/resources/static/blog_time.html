@@ -19,7 +19,7 @@
         <!-- 用来占据中间位置 -->
         <span class="spacer"></span>
         <a href="blog_list.html">主页</a>
-        <a href="myblog_list.html">博客列表</a>
+        <a href="myblog_list.html">个人博客列表</a>
         <a href="blog_add.html">写博客</a>
         <a href="javascript: logout()">退出登录</a>
     </div>
@@ -53,7 +53,7 @@
             jQuery.ajax({
                 url: '/user/showinfo',
                 type: 'post',
-                data: {},
+                data: {"state": 2},
                 success: function(result) {
                     if (result != null && result.statusCode == 200) {
                         jQuery("#username").text(result.data.username);
@@ -131,7 +131,7 @@
             if (confirm("确认删除改定时发布文章？")) {
                 // 删除草稿
                 jQuery.ajax({
-                    url: 'art/delete',
+                    url: '/art/delete',
                     type: 'post',
                     data: {"id": id},
                     success: function(result) {

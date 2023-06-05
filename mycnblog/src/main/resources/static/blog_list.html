@@ -86,7 +86,7 @@
         pindex = (getUrlValue("pindex")==""?1:getUrlValue("pindex"));
         function initPage() {
             jQuery.ajax({
-                url: 'art/listpage',
+                url: '/art/listpage',
                 type: 'post',
                 data: {"pindex": pindex, "psize": psize},
                 success: function(result) {

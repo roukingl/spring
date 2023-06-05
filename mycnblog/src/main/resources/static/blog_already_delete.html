@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博客列表</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/blog_list.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/common.js"></script>
+</head>
+
+<body>
+<!-- 导航栏 -->
+<div class="nav">
+    <img src="img/system.png" alt="">
+    <span class="title">我的博客系统</span>
+    <!-- 用来占据中间位置 -->
+    <span class="spacer"></span>
+    <a href="blog_list.html">主页</a>
+    <a href="myblog_list.html">个人博客列表</a>
+    <a href="blog_add.html">写博客</a>
+    <a href="javascript: logout()">退出登录</a>
+</div>
+<!-- 版心 -->
+<div class="container">
+    <!-- 左侧个人信息 -->
+    <div class="container-left">
+        <div class="card">
+            <img src="img/doge.jpg" class="avtar" alt="">
+            <h3 id="username"></h3>
+            <a href="http:www.github.com">github 地址</a>
+            <div class="counter">
+                <span>文章</span>
+                <span>分类</span>
+            </div>
+            <div class="counter">
+                <span id = "articleNumber"></span>
+                <span>1</span>
+            </div>
+        </div>
+    </div>
+    <!-- 右侧内容详情 -->
+    <div id="artDiv" class="container-right">
+
+
+    </div>
+</div>
+
+<script>
+    function showInfo() {
+        jQuery.ajax({
+            url: '/user/showinfo',
+            type: 'post',
+            data: {"state": 3},
+            success: function(result) {
+                if (result != null && result.statusCode == 200) {
+                    jQuery("#username").text(result.data.username);
+                    jQuery("#articleNumber").text(result.data.articleNumber);
+                } else {
+                    alert("个人信息加载失败，请刷新");
+                }
+            }
+        });
+    }
+
+    showInfo();
+
+    function getMyArticleList(){
+        jQuery.ajax({
+            url:"/art/dellist",
+            type:"POST",
+            data:{},
+            success:function(result){
+                if(result!=null && result.statusCode==200){
+                    // 有两种情况，一种是发表了文章，一种是没有发表任何文章
+                    if(result.data!=null && result.data.length>0){
+                        // 此用户发表文章了
+                        var artListDiv ="";
+                        for(var i=0;i<result.data.length;i++){
+                            var artItem = result.data[i];
+                            artListDiv += '<div class="blog">';
+                            artListDiv += '<div class="title">'+artItem.title+'</div>';
+                            artListDiv += '<div class="date">'+artItem.updatetime+'</div>';
+                            artListDiv += '<div class="desc">';
+                            artListDiv += artItem.content;
+                            artListDiv += '</div>';
+                            artListDiv += '<a href="blog_edit.html?id='+
+                                artItem.id + '" class="detail">修改 &gt;&gt;</a>&nbsp;&nbsp;';
+                            artListDiv += '<a href="javascript:myDel('+
+                                artItem.id+');" class="detail">删除 &gt;&gt;</a>';
+                            artListDiv += '</div>';
+                        }
+                        jQuery("#artDiv").html(artListDiv);
+                    }else{
+                        // 当前用户从未发过任何文章
+                        jQuery("#artDiv").html("<h3>暂无删除的文章~</h3>");
+                    }
+                }else{
+                    alert("查询文章列表出错，请重试！");
+                }
+            }
+        });
+    }
+
+    getMyArticleList();
+
+    function myDel(id) {
+        if (confirm("确认永久删除改文章？")) {
+            // 删除文章
+            jQuery.ajax({
+                url: '/art/deletetrue',
+                type: 'post',
+                data: {"id": id},
+                success: function(result) {
+                    if (result != null && result.statusCode == 200 && result.data == 1) {
+                        location.href = location.href;
+                        alert("删除成功");
+                    } else {
+                        alert("删除失败，请重试");
+                    }
+                }
+
+            });
+        }
+    }
+
+
+</script>
+</body>
+
+</html>

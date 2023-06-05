@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/SSMLearning/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/SSMLearning/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/SpringAOPLearning/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/SpringAOPLearning/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/SpringBootLearning/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/SpringBootLearning/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/SpringMVCLearning/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/SpringMVCLearning/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TransactionLearning/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/TransactionLearning/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/UnifiedFunctionalProcessing/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/UnifiedFunctionalProcessing/src/main/resources" charset="UTF-8" />
+  </component>
+</project>
