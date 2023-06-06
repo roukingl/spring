@@ -1,4 +1,4 @@
-package com.example.java_gobang.config;
+package com.example.java_gobang.component;
 
 import com.example.java_gobang.common.AjaxResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;

@@ -1,7 +1,7 @@
 package com.example.java_gobang.controller;
 
 import com.example.java_gobang.common.AjaxResult;
-import com.example.java_gobang.component.UserSessionUtils;
+import com.example.java_gobang.common.UserSessionUtils;
 import com.example.java_gobang.entity.User;
 import com.example.java_gobang.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

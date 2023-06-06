@@ -1,4 +1,4 @@
-package com.example.java_gobang.config;
+package com.example.java_gobang.component;
 
 import com.example.java_gobang.common.AjaxResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,8 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @ResponseBody
 public class ResponseAdvice implements ResponseBodyAdvice {
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public boolean supports(MethodParameter returnType, Class converterType) {

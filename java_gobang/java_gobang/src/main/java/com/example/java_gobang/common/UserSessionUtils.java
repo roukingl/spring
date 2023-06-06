@@ -1,4 +1,4 @@
-package com.example.java_gobang.component;
+package com.example.java_gobang.common;
 
 import com.example.java_gobang.common.AppVariable;
 import com.example.java_gobang.entity.User;

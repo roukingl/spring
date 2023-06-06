@@ -17,7 +17,7 @@
         <!-- 展示用户信息 -->
         <div id="screen"></div>
         <!-- 匹配按钮 -->
-        <div id="match-button">开始匹配</div>
+        <div id="match-button" onclick="match()">开始匹配</div>
     </div>
 </div>
 
@@ -35,7 +35,7 @@
                     var information = "";
                     var person = result.data;
                     information += "用户名：" + person.username + " 天梯积分：" + person.score +
-                                    " <br>" + "总场次：" + person.total_count + " 胜利场次：" + person.win_count;
+                        " <br>" + "总场次：" + person.total_count + " 胜利场次：" + person.win_count;
                     jQuery("#screen").html(information);
                 } else {
                     // 查询失败
@@ -44,7 +44,75 @@
             }
         });
     }
+
     initUser();
+
+    var webSocketURL = "ws://" + location.host + "/findmatch";
+    var webSocket = new WebSocket(webSocketURL);
+
+    webSocket.onopen = function () {
+        console.log("建立连接");
+    }
+
+    webSocket.onerror = function () {
+        console.log("出现异常");
+    }
+
+    webSocket.onclose = function () {
+        console.log("关闭连接");
+        alert("当前与服务器已经断开连接，请重新登录");
+        location.assign("/login.html");
+    }
+
+    // 监听浏览器的关闭时间
+    window.onbeforeunload = function() {
+        webSocket.close();
+    }
+
+    // 处理服务器返回的响应，响应格式
+    //{
+    //  boolean OK
+    //  String reason  = "
+    //  String message = ""
+    //}
+    webSocket.onmessage = function (e) {
+        var result = JSON.parse(e.data);
+        let matchButton = document.querySelector('#match-button');
+        if (!result.OK) {
+            console.log("收到了失败响应" + result.reason);
+        }
+        if (result.message === "startMatch") {
+            // 正在匹配
+            matchButton.innerHTML = '正在匹配...(点击停止)';
+        } else if (result.message === "stopMatch") {
+            // 取消匹配
+            matchButton.innerHTML = '开始匹配';
+        } else if (result.message === "matchSuccess") {
+            // 匹配成功
+            location.replace("/game_room.html");
+        } else if (result.message === "repeatConnection") {
+            // 禁止多开
+            alert(result.reason);
+        } else {
+            alert("非法响应");
+        }
+    }
+
+    function match() {
+        var matchButton = document.querySelector('#match-button');
+        if (matchButton.innerHTML === "开始匹配") {
+            webSocket.send(JSON.stringify({
+                message: 'startMatch'
+            }));
+        } else if (matchButton.innerHTML === "正在匹配...(点击停止)") {
+            webSocket.send(JSON.stringify({
+                message: 'stopMatch'
+            }));
+        } else {
+            alert("连接断开，请重试！");
+            location.href = "login.html";
+        }
+    }
 
 </script>
 </body>
