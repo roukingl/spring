@@ -5,10 +5,55 @@ let gameInfo = {
     isWhite: true,
 }
 
-//////////////////////////////////////////////////
-// 设定界面显示相关操作
-//////////////////////////////////////////////////
+// websocket 连接
+var webSocketURL = "ws://" + location.host + "/game";
+var webSocket = new WebSocket(webSocketURL);
 
+webSocket.onopen = function () {
+    console.log("游戏连接成功");
+}
+
+webSocket.onerror = function() {
+    console.log("连接发生错误");
+}
+
+webSocket.onclose = function () {
+    console.log("连接关闭");
+}
+
+window.onbeforeunload = function () {
+    webSocket.close();
+}
+
+webSocket.onmessage = function (event) {
+    var result = JSON.parse(event.data);
+    console.log(result);
+    if (!result.ok) {
+        console.log("连接失败，请重试！原因：" + result.reason);
+        return;
+    }
+
+    if (result.message === "gameReady") {
+        // 初始化信息
+        gameInfo.roomId = result.roomId;
+        gameInfo.thisUserId = result.thisUserId;
+        gameInfo.thatUserId = result.thatUserId;
+        gameInfo.isWhite = (result.firstUserId === result.thisUserId);
+        // 初始化棋盘
+        initGame();
+        // 显示提示栏信息
+        setScreenText(gameInfo.isWhite);
+    } else if (result.message === "repeatConnection") {
+        alert(result.reason);
+        location.href = "/login.html";
+    } else {
+
+    }
+
+}
+
+
+// 设定界面显示相关操作
 function setScreenText(me) {
     let screen = document.querySelector('#screen');
     if (me) {
@@ -86,7 +131,7 @@ function initGame() {
         // 注意, 横坐标是列, 纵坐标是行
         let col = Math.floor(x / 30);
         let row = Math.floor(y / 30);
-        if (chessBoard[row][col] == 0) {
+        if (chessBoard[row][col] === 0) {
             // 发送坐标给服务器, 服务器要返回结果
             send(row, col);
 
@@ -97,72 +142,46 @@ function initGame() {
     }
 
     function send(row, col) {
-        let req = {
-            message: 'putChess',
+        var request = {
+            message: "putChess",
             userId: gameInfo.thisUserId,
             row: row,
             col: col
         };
 
-        websocket.send(JSON.stringify(req));
+        webSocket.send(JSON.stringify(request));
     }
 
-    // 之前 websocket.onmessage 主要是用来处理了游戏就绪响应. 在游戏就绪之后, 初始化完毕之后, 也就不再有这个游戏就绪响应了.
-    // 就在这个 initGame 内部, 修改 websocket.onmessage 方法~~, 让这个方法里面针对落子响应进行处理!
-    websocket.onmessage = function(event) {
-        console.log("[handlerPutChess] " + event.data);
-
-        let resp = JSON.parse(event.data);
-        if (resp.message != 'putChess') {
-            console.log("响应类型错误!");
+    webSocket.onmessage = function(e) {
+        var result = JSON.parse(e.data);
+        console.log(result);
+        if (result.message === "No Message") {
+            // 落子请求失败，提醒重试
+            alert("落子失败，请重试!");
             return;
         }
-
-        // 先判定当前这个响应是自己落的子, 还是对方落的子.
-        if (resp.userId == gameInfo.thisUserId) {
-            // 我自己落的子
-            // 根据我自己子的颜色, 来绘制一个棋子
-            oneStep(resp.col, resp.row, gameInfo.isWhite);
-        } else if (resp.userId == gameInfo.thatUserId) {
-            // 我的对手落的子
-            oneStep(resp.col, resp.row, !gameInfo.isWhite);
+        if (result.message !== "putChess") {
+            console.log("响应类型错误");
+            return;
+        }
+        if (result.userId === gameInfo.thisUserId) {
+            // 自己下子绘制棋子
+            oneStep(result.col, result.row, gameInfo.isWhite);
+        } else if (result.userId === gameInfo.thatUserId) {
+            // 对面下子绘制棋子
+            oneStep(result.col, result.row, !gameInfo.isWhite);
         } else {
-            // 响应错误! userId 是有问题的!
-            console.log('[handlerPutChess] resp userId 错误!');
+            // 发生错误
+            console.log("发生错误，绘制棋子错误");
             return;
         }
-
-        // 给对应的位置设为 1, 方便后续逻辑判定当前位置是否已经有子了.
-        chessBoard[resp.row][resp.col] = 1;
-
-        // 交换双方的落子轮次
+        // 在前端数组上标记
+        chessBoard[result.row][result.col] = 1;
+        // 交换双方落子
         me = !me;
         setScreenText(me);
 
-        // 判定游戏是否结束
-        let screenDiv = document.querySelector('#screen');
-        if (resp.winner != 0) {
-            if (resp.winner == gameInfo.thisUserId) {
-                // alert('你赢了!');
-                screenDiv.innerHTML = '你赢了!';
-            } else if (resp.winner = gameInfo.thatUserId) {
-                // alert('你输了!');
-                screenDiv.innerHTML = '你输了!';
-            } else {
-                alert("winner 字段错误! " + resp.winner);
-            }
-            // 回到游戏大厅
-            // location.assign('/game_hall.html');
 
-            // 增加一个按钮, 让玩家点击之后, 再回到游戏大厅~
-            let backBtn = document.createElement('button');
-            backBtn.innerHTML = '回到大厅';
-            backBtn.onclick = function() {
-                location.replace('/game_hall.html');
-            }
-            let fatherDiv = document.querySelector('.container>div');
-            fatherDiv.appendChild(backBtn);
-        }
     }
 }
 

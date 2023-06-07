@@ -30,16 +30,13 @@
             type: 'post',
             data: {},
             success: function (result) {
-                if (result != null && result.status == 200 && result.data != null) {
+                if (result != null && result.status === 200 && result.data != null) {
                     // 查询成功，添加到页面上
                     var information = "";
                     var person = result.data;
                     information += "用户名：" + person.username + " 天梯积分：" + person.score +
                         " <br>" + "总场次：" + person.total_count + " 胜利场次：" + person.win_count;
                     jQuery("#screen").html(information);
-                } else {
-                    // 查询失败
-                    alert("信息查询失败，请重试！");
                 }
             }
         });
@@ -60,8 +57,6 @@
 
     webSocket.onclose = function () {
         console.log("关闭连接");
-        alert("当前与服务器已经断开连接，请重新登录");
-        location.assign("/login.html");
     }
 
     // 监听浏览器的关闭时间
@@ -77,10 +72,12 @@
     //}
     webSocket.onmessage = function (e) {
         var result = JSON.parse(e.data);
-        let matchButton = document.querySelector('#match-button');
-        if (!result.OK) {
+
+        if (!result.ok) {
             console.log("收到了失败响应" + result.reason);
         }
+
+        let matchButton = document.querySelector('#match-button');
         if (result.message === "startMatch") {
             // 正在匹配
             matchButton.innerHTML = '正在匹配...(点击停止)';
@@ -89,10 +86,12 @@
             matchButton.innerHTML = '开始匹配';
         } else if (result.message === "matchSuccess") {
             // 匹配成功
-            location.replace("/game_room.html");
+            location.href = "game_rome.html";
         } else if (result.message === "repeatConnection") {
             // 禁止多开
             alert(result.reason);
+            webSocket.close();
+            location.href = "login.html";
         } else {
             alert("非法响应");
         }

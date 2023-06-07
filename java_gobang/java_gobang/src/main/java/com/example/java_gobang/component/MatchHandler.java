@@ -36,10 +36,10 @@ public class MatchHandler extends TextWebSocketHandler {
             return;
         }
 
-        if (onlineUserState.getSessionHall(user.getId()) != null) {
-            MatchResponse matchResponse = MatchResponse.fail(false,"游戏禁止多开", "repeatConnection");
+        if (onlineUserState.getSessionHall(user.getId()) != null
+            || onlineUserState.getSessionRoom(user.getId()) != null) {
+            MatchResponse matchResponse = MatchResponse.fail(true, "游戏禁止多开", "repeatConnection");
             session.sendMessage(new TextMessage(objectMapper.writeValueAsString(matchResponse)));
-            session.close();
             return;
         }
 
@@ -82,9 +82,7 @@ public class MatchHandler extends TextWebSocketHandler {
         // 出现异常, 需要从准备hash中删除session
         User user = (User) session.getAttributes().get(AppVariable.USER_SESSION_KEY);
         if (user == null) {
-            // 未登录的状态
-            MatchResponse matchResponse = MatchResponse.fail(false, "您当前还未登录，不能进行后续匹配操作");
-            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(matchResponse)));
+            // 未登录的状态，直接返回
             return;
         }
 
@@ -104,9 +102,7 @@ public class MatchHandler extends TextWebSocketHandler {
         // 连接断开, 需要从准备hash中删除session
         User user = (User) session.getAttributes().get(AppVariable.USER_SESSION_KEY);
         if (user == null) {
-            // 未登录的状态
-            MatchResponse matchResponse = MatchResponse.fail(false, "您当前还未登录，不能进行后续匹配操作");
-            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(matchResponse)));
+            // 未登录的状态，直接返回
             return;
         }
 

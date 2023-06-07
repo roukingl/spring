@@ -5,21 +5,21 @@ import lombok.Data;
 @Data
 public class MatchResponse {
 
-    private boolean OK;
+    private boolean ok;
     private String reason;
     private String message;
 
-    public static MatchResponse success(boolean OK, String reason, String message) {
+    public static MatchResponse success(boolean ok, String reason, String message) {
         MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setOK(OK);
+        matchResponse.setOk(ok);
         matchResponse.setReason(reason);
         matchResponse.setMessage(message);
         return matchResponse;
     }
 
-    public static MatchResponse success(boolean OK, String reason) {
+    public static MatchResponse success(boolean ok, String reason) {
         MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setOK(OK);
+        matchResponse.setOk(ok);
         matchResponse.setReason(reason);
         matchResponse.setMessage("");
         return matchResponse;
@@ -27,23 +27,23 @@ public class MatchResponse {
 
     public static MatchResponse success(String message) {
         MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setOK(true);
+        matchResponse.setOk(true);
         matchResponse.setReason("");
         matchResponse.setMessage(message);
         return matchResponse;
     }
 
-    public static MatchResponse fail(boolean OK, String reason) {
+    public static MatchResponse fail(boolean ok, String reason) {
         MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setOK(OK);
+        matchResponse.setOk(ok);
         matchResponse.setReason(reason);
         matchResponse.setMessage("");
         return matchResponse;
     }
 
-    public static MatchResponse fail(boolean OK, String reason, String message) {
+    public static MatchResponse fail(boolean ok, String reason, String message) {
         MatchResponse matchResponse = new MatchResponse();
-        matchResponse.setOK(OK);
+        matchResponse.setOk(ok);
         matchResponse.setReason(reason);
         matchResponse.setMessage(message);
         return matchResponse;
