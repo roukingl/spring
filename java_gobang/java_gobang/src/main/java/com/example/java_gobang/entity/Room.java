@@ -3,6 +3,7 @@ package com.example.java_gobang.entity;
 import com.example.java_gobang.JavaGobangApplication;
 import com.example.java_gobang.component.OnlineUserState;
 import com.example.java_gobang.component.RoomManager;
+import com.example.java_gobang.mapper.UserMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -24,8 +25,10 @@ public class Room {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    // 三个手动注入的属性
     private OnlineUserState onlineUserState;
     private RoomManager roomManager;
+    private UserMapper userMapper;
 
     private static final int MAX_ROW = 15;
     private static final int MAX_COL = 15;
@@ -75,6 +78,15 @@ public class Room {
                 String response = objectMapper.writeValueAsString(dropsResponse);
                 session2.sendMessage(new TextMessage(response));
             }
+
+            if (dropsResponse.getWinUserId() != 0) {
+                // 游戏分出胜负，房间销毁 ,修改胜方败方数据
+                roomManager.removeRoom(roomId, user1.getId(), user2.getId());
+                int winId = dropsResponse.getWinUserId();
+                int loseId = dropsResponse.getWinUserId() == user2.getId() ? user1.getId() : user2.getId();
+                userMapper.userWinUpdate(winId);
+                userMapper.userLoseUpdate(loseId);
+            }
         } else {
             // 请求不是putChess，发生错误，提醒客户端
             WebSocketSession session = onlineUserState.getSessionRoom(dropsRequest.getUserId());
@@ -90,6 +102,68 @@ public class Room {
     }
 
     private int checkBroadSuccess(int row, int col, int chess) {
+
+        // 首先判定横着五个点
+        for (int c = col - 4; c <= col; c++) {
+            try {
+                if (broad[row][c] == chess
+                        && broad[row][c + 1] == chess
+                        && broad[row][c + 2] == chess
+                        && broad[row][c + 3] == chess
+                        && broad[row][c + 4] == chess) {
+                    return chess == 1 ? user1.getId() : user2.getId();
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                continue;
+            }
+        }
+
+        // 判断五个竖着的
+        for (int r = row - 4; r <= row; r++) {
+            try {
+                if (broad[row][r] == chess
+                    && broad[r + 1][col] == chess
+                    && broad[r + 2][col] == chess
+                    && broad[r + 3][col] == chess
+                    && broad[r + 4][col] == chess) {
+                    return chess == 1? user1.getId() : user2.getId();
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                continue;
+            }
+        }
+
+        // 判断五个\这样的
+        for (int r = row - 4, c = col - 4; r <= row && c <= col; r++, c++) {
+            try {
+                if (broad[r][c] == chess
+                    && broad[r + 1][c + 1] == chess
+                    && broad[r + 2][c + 2] == chess
+                    && broad[r + 3][c + 3] == chess
+                    && broad[r + 4][c + 4] == chess) {
+                    return chess == 1? user1.getId() : user2.getId();
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                continue;
+            }
+
+        }
+
+        // 判断五个/这样的
+        for (int r = row + 4, c = col - 4; r <= row && c <= col; r++, c++) {
+            try {
+                if (broad[r][c] == chess
+                    && broad[r + 1][c - 1] == chess
+                    && broad[r + 2][c - 2] == chess
+                    && broad[r + 3][c - 3] == chess
+                    && broad[r + 4][c - 4] == chess) {
+                    return chess == 1? user1.getId() : user2.getId();
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                continue;
+            }
+        }
+        // 当前没有人获胜
         return 0;
     }
 
@@ -98,5 +172,6 @@ public class Room {
         roomId = UUID.randomUUID().toString();
         onlineUserState = JavaGobangApplication.context.getBean(OnlineUserState.class);
         roomManager = JavaGobangApplication.context.getBean(RoomManager.class);
+        userMapper = JavaGobangApplication.context.getBean(UserMapper.class);
     }
 }

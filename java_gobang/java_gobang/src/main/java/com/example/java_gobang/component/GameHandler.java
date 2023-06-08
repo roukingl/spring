@@ -2,8 +2,10 @@ package com.example.java_gobang.component;
 
 import com.example.java_gobang.common.AppVariable;
 import com.example.java_gobang.entity.ConnectResponse;
+import com.example.java_gobang.entity.DropsResponse;
 import com.example.java_gobang.entity.Room;
 import com.example.java_gobang.entity.User;
+import com.example.java_gobang.mapper.UserMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class GameHandler extends TextWebSocketHandler {
 
     @Autowired
     private OnlineUserState onlineUserState;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -142,5 +147,39 @@ public class GameHandler extends TextWebSocketHandler {
             // 只有从状态hash中得到的session和从前端传来的session相等时，才删除状态hash中的session
             onlineUserState.exitSessionRoom(user.getId());
         }
+
+        onticeThatWin(user);
+    }
+
+    @SneakyThrows
+    private void onticeThatWin(User user) {
+        Room room = roomManager.getRoomByUserId(user.getId());
+        if (room == null) {
+            // 房间已经销毁
+            System.out.println("房间已经销毁");
+            return;
+        }
+        User thatUser = (user == room.getUser1() ? room.getUser2() : room.getUser1());
+        WebSocketSession session = onlineUserState.getSessionHall(thatUser.getId());
+        if (session == null) {
+            // 说明对手也掉线了，当前对局作废
+            System.out.println("当前对局作废");
+            return;
+        }
+
+        // 因为是落子期间掉线，所以构建一个落子响应
+        DropsResponse dropsResponse = new DropsResponse();
+        dropsResponse.setMessage("putChess");
+        dropsResponse.setWinUserId(thatUser.getId());
+        dropsResponse.setUserId(thatUser.getId());
+        String response = objectMapper.writeValueAsString(dropsResponse);
+        session.sendMessage(new TextMessage(response));
+
+
+        int winId = thatUser.getId();
+        int loseId = user.getId();
+        userMapper.userWinUpdate(winId);
+        userMapper.userLoseUpdate(loseId);
+        roomManager.removeRoom(room.getRoomId(), room.getUser1().getId(), room.getUser2().getId());
     }
 }

@@ -181,7 +181,30 @@ function initGame() {
         me = !me;
         setScreenText(me);
 
+        // 判定游戏是否结束
+        let screenDiv = document.querySelector('#screen');
+        if (result.winUserId !== 0) {
+            if (result.winUserId === gameInfo.thisUserId) {
+                // alert('你赢了!');
+                screenDiv.innerHTML = '你赢了!';
+            } else if (result.winUserId === gameInfo.thatUserId) {
+                // alert('你输了!');
+                screenDiv.innerHTML = '你输了!';
+            } else {
+                alert("winner 字段错误! " + result.winUserId);
+            }
+            // 回到游戏大厅
+            // location.assign('/game_hall.html');
 
+            // 增加一个按钮, 让玩家点击之后, 再回到游戏大厅~
+            let backBtn = document.createElement('button');
+            backBtn.innerHTML = '回到大厅';
+            backBtn.onclick = function() {
+                location.replace('/game_hall.html');
+            }
+            let fatherDiv = document.querySelector('.container>div');
+            fatherDiv.appendChild(backBtn);
+        }
     }
 }
 

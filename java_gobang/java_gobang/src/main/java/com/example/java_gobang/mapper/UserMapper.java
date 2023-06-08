@@ -21,4 +21,15 @@ public interface UserMapper {
      */
     User selectUserByName(@Param("username") String username);
 
+    /**
+     * 胜方修改数据
+     * @param id 胜方用户id
+     */
+    void userWinUpdate(@Param("id") Integer id);
+
+    /**
+     * 败方修改数据
+     * @param id 败方id
+     */
+    void userLoseUpdate(@Param("id") Integer id);
 }
