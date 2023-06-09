@@ -86,12 +86,12 @@
             matchButton.innerHTML = '开始匹配';
         } else if (result.message === "matchSuccess") {
             // 匹配成功
-            location.href = "game_rome.html";
+            location.replace("/game_rome.html");
         } else if (result.message === "repeatConnection") {
             // 禁止多开
             alert(result.reason);
             webSocket.close();
-            location.href = "login.html";
+            location.replace("/login.html");
         } else {
             alert("非法响应");
         }
@@ -109,7 +109,7 @@
             }));
         } else {
             alert("连接断开，请重试！");
-            location.href = "login.html";
+            location.replace("/login.html");
         }
     }
 

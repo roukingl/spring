@@ -10,6 +10,10 @@
         select * from userinfo where username = #{username};
     </select>
 
+    <select id="selectUserById" resultType="com.example.java_gobang.entity.User">
+        select * from userinfo where id = #{id}
+    </select>
+
     <update id="userWinUpdate">
         update userinfo set score = score + 30, total_count = total_count + 1, win_count = win_count + 1
         where id = #{id}

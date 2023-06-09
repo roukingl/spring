@@ -37,4 +37,8 @@ public class UserService {
         return isLogin;
     }
 
+    public User getUserByIdService(Integer userId) {
+        return userMapper.selectUserById(userId);
+    }
+
 }

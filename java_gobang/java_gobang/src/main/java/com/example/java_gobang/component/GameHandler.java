@@ -118,6 +118,11 @@ public class GameHandler extends TextWebSocketHandler {
             return;
         }
         Room room = roomManager.getRoomByUserId(user.getId());
+        if (room == null) {
+            // 房间为空，说明没有创建房间在房间管理器中，
+            System.out.println("房间已空");
+            return;
+        }
         room.putChess(message.getPayload());
     }
 
@@ -133,6 +138,8 @@ public class GameHandler extends TextWebSocketHandler {
             // 只有从状态hash中得到的session和从前端传来的session相等时，才删除状态hash中的session
             onlineUserState.exitSessionRoom(user.getId());
         }
+
+        onticeThatWin(user);
     }
 
     @Override
@@ -160,7 +167,7 @@ public class GameHandler extends TextWebSocketHandler {
             return;
         }
         User thatUser = (user == room.getUser1() ? room.getUser2() : room.getUser1());
-        WebSocketSession session = onlineUserState.getSessionHall(thatUser.getId());
+        WebSocketSession session = onlineUserState.getSessionRoom(thatUser.getId());
         if (session == null) {
             // 说明对手也掉线了，当前对局作废
             System.out.println("当前对局作废");
@@ -175,7 +182,7 @@ public class GameHandler extends TextWebSocketHandler {
         String response = objectMapper.writeValueAsString(dropsResponse);
         session.sendMessage(new TextMessage(response));
 
-
+        // 胜方败方数据修改
         int winId = thatUser.getId();
         int loseId = user.getId();
         userMapper.userWinUpdate(winId);

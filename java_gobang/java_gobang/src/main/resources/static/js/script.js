@@ -45,7 +45,7 @@ webSocket.onmessage = function (event) {
         setScreenText(gameInfo.isWhite);
     } else if (result.message === "repeatConnection") {
         alert(result.reason);
-        location.href = "/login.html";
+        location.replace("/login.html");
     } else {
 
     }
@@ -185,10 +185,8 @@ function initGame() {
         let screenDiv = document.querySelector('#screen');
         if (result.winUserId !== 0) {
             if (result.winUserId === gameInfo.thisUserId) {
-                // alert('你赢了!');
                 screenDiv.innerHTML = '你赢了!';
             } else if (result.winUserId === gameInfo.thatUserId) {
-                // alert('你输了!');
                 screenDiv.innerHTML = '你输了!';
             } else {
                 alert("winner 字段错误! " + result.winUserId);

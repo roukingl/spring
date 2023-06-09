@@ -15,11 +15,18 @@ public interface UserMapper {
     int insertUser(User user);
 
     /**
-     * 根据用户名查询用户信息
+     * 根据用户名查询用户信息, 用于登录验证
      * @param username 用户名
      * @return 返回查询到的用户信息
      */
     User selectUserByName(@Param("username") String username);
+
+    /**
+     * 通过id寻找用户
+     * @param id 用户id
+     * @return 返回查找到的用户
+     */
+    User selectUserById(@Param("id") Integer id);
 
     /**
      * 胜方修改数据

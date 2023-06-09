@@ -46,6 +46,8 @@ public class UserController {
         if (user == null) {
             return AjaxResult.fail(2, "非法访问");
         }
-        return AjaxResult.success(user);
+        int userId = user.getId();
+        User resultUser = userService.getUserByIdService(userId);
+        return AjaxResult.success(resultUser);
     }
 }

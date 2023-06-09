@@ -50,7 +50,7 @@ public class Room {
             }
             broad[row][col] = chess;
             // 检查胜利信息，0 代表无人胜利，
-            int winnerId = checkBroadSuccess(row, col, chess);
+            int winner = checkBroadSuccess(row, col, chess);
             // 返回棋盘打印棋子信息
             WebSocketSession session1 = onlineUserState.getSessionRoom(user1.getId());
             WebSocketSession session2 = onlineUserState.getSessionRoom(user2.getId());
@@ -58,7 +58,7 @@ public class Room {
             dropsResponse.setMessage("putChess");
             dropsResponse.setRow(row);
             dropsResponse.setCol(col);
-            dropsResponse.setWinUserId(winnerId);
+            dropsResponse.setWinUserId(winner);
             dropsResponse.setUserId(dropsRequest.getUserId());
             if (session1 == null) {
                  // 玩家一掉线，判断玩家二胜利
@@ -121,7 +121,7 @@ public class Room {
         // 判断五个竖着的
         for (int r = row - 4; r <= row; r++) {
             try {
-                if (broad[row][r] == chess
+                if (broad[r][col] == chess
                     && broad[r + 1][col] == chess
                     && broad[r + 2][col] == chess
                     && broad[r + 3][col] == chess
