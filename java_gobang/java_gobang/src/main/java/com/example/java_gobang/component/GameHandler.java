@@ -32,6 +32,7 @@ public class GameHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         User user = (User) session.getAttributes().get(AppVariable.USER_SESSION_KEY);
+        // 先创建一个连接响应对象，后面进行属性赋值然后返回给前端
         ConnectResponse connectResponse = new ConnectResponse();
         if (user == null) {
             // 用户没有登录，返回信息
@@ -41,7 +42,7 @@ public class GameHandler extends TextWebSocketHandler {
             session.sendMessage(new TextMessage(response));
             return;
         }
-
+        // 一个用户登录大厅页面，或登录房间页面，或既然登录大厅页面又登录房间页面就是多开，禁止
         if (onlineUserState.getSessionHall(user.getId()) != null
                 || onlineUserState.getSessionRoom(user.getId()) != null) {
             // 游戏多开
@@ -52,22 +53,22 @@ public class GameHandler extends TextWebSocketHandler {
             session.sendMessage(new TextMessage(response));
             return;
         }
+        // 用户状态正常才把用户管理在房间哈希表中
         onlineUserState.enterSessionRoom(user.getId(), session);
 
-        // 判断房间里有没有人
         Room room = roomManager.getRoomByUserId(user.getId());
         if (room == null) {
-            // 判断当前用户是否进入房间，没有就说明匹配的时候没有让房间和用户id关联起来，也就说明没有匹配成功
+            // 判断房间是否存在，没有就说明匹配的时候没有让房间和用户id关联起来，也就说明没有匹配成功
             connectResponse.setOk(false);
             connectResponse.setReason("当前没有匹配成功，不能进入游戏");
             String response = objectMapper.writeValueAsString(connectResponse);
             session.sendMessage(new TextMessage(response));
             return;
         }
-
+        // 注意多线程问题
         synchronized (room) {
             if (room.getUser1() == null) {
-                // 房间里用户1是空的，那就添加进去
+                // 房间里用户1是空的，那就添加进去，并设置为先手
                 room.setUser1(user);
                 room.setFirstUserId(user.getId());
                 System.out.println("玩家一准备就绪" + user.getUsername());
@@ -90,6 +91,7 @@ public class GameHandler extends TextWebSocketHandler {
         connectResponse.setReason("房间满了，当前不能对战");
         String response = objectMapper.writeValueAsString(connectResponse);
         session.sendMessage(new TextMessage(response));
+
     }
 
     @SneakyThrows
@@ -104,6 +106,7 @@ public class GameHandler extends TextWebSocketHandler {
         String response = objectMapper.writeValueAsString(connectResponse);
         WebSocketSession session = onlineUserState.getSessionRoom(thisUserId);
         session.sendMessage(new TextMessage(response));
+
     }
 
     @Override
@@ -111,18 +114,21 @@ public class GameHandler extends TextWebSocketHandler {
         User user = (User) session.getAttributes().get(AppVariable.USER_SESSION_KEY);
         ConnectResponse connectResponse = new ConnectResponse();
         if (user == null) {
+            // 玩家不在房间页面了
             connectResponse.setOk(false);
             connectResponse.setReason("用户未登录");
             String response = objectMapper.writeValueAsString(connectResponse);
             session.sendMessage(new TextMessage(response));
             return;
         }
+        // 通过该玩家id寻找房间
         Room room = roomManager.getRoomByUserId(user.getId());
         if (room == null) {
             // 房间为空，说明没有创建房间在房间管理器中，
             System.out.println("房间已空");
             return;
         }
+        // 进行下棋
         room.putChess(message.getPayload());
     }
 
@@ -131,6 +137,7 @@ public class GameHandler extends TextWebSocketHandler {
         // 程序异常，需要删除玩家在状态hash中的session
         User user = (User) session.getAttributes().get(AppVariable.USER_SESSION_KEY);
         if (user == null) {
+            // 得不到就直接返回
             return;
         }
         WebSocketSession tmpSession = onlineUserState.getSessionRoom(user.getId());
@@ -138,7 +145,7 @@ public class GameHandler extends TextWebSocketHandler {
             // 只有从状态hash中得到的session和从前端传来的session相等时，才删除状态hash中的session
             onlineUserState.exitSessionRoom(user.getId());
         }
-
+        // 通知对手获胜
         onticeThatWin(user);
     }
 
@@ -154,18 +161,20 @@ public class GameHandler extends TextWebSocketHandler {
             // 只有从状态hash中得到的session和从前端传来的session相等时，才删除状态hash中的session
             onlineUserState.exitSessionRoom(user.getId());
         }
-
+        // 通知对手获胜
         onticeThatWin(user);
     }
 
     @SneakyThrows
     private void onticeThatWin(User user) {
+        // 通过掉线用户得到房间
         Room room = roomManager.getRoomByUserId(user.getId());
         if (room == null) {
             // 房间已经销毁
             System.out.println("房间已经销毁");
             return;
         }
+        // 通过房间来得到对手
         User thatUser = (user == room.getUser1() ? room.getUser2() : room.getUser1());
         WebSocketSession session = onlineUserState.getSessionRoom(thatUser.getId());
         if (session == null) {
@@ -177,7 +186,9 @@ public class GameHandler extends TextWebSocketHandler {
         // 因为是落子期间掉线，所以构建一个落子响应
         DropsResponse dropsResponse = new DropsResponse();
         dropsResponse.setMessage("putChess");
+        // 胜利的是掉线玩家的对手
         dropsResponse.setWinUserId(thatUser.getId());
+        // 返回给掉线玩家对手页面展示
         dropsResponse.setUserId(thatUser.getId());
         String response = objectMapper.writeValueAsString(dropsResponse);
         session.sendMessage(new TextMessage(response));
@@ -187,6 +198,7 @@ public class GameHandler extends TextWebSocketHandler {
         int loseId = user.getId();
         userMapper.userWinUpdate(winId);
         userMapper.userLoseUpdate(loseId);
+        // 从房间管理器中删除该房间
         roomManager.removeRoom(room.getRoomId(), room.getUser1().getId(), room.getUser2().getId());
     }
 }

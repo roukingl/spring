@@ -14,6 +14,7 @@ import java.util.UUID;
 
 @Data
 public class Room {
+    // 房间id
     private String roomId;
 
     // 一个房间里的两个用户
@@ -23,6 +24,13 @@ public class Room {
     // 谁是先手
     private int firstUserId;
 
+    // 棋盘的  行 列
+    private static final int MAX_ROW = 15;
+    private static final int MAX_COL = 15;
+
+    // 有三种状态，0 代表没人下，1表示用户1下的，2表示用户2下的
+    private int[][] broad = new int[MAX_ROW][MAX_COL];
+
     private ObjectMapper objectMapper = new ObjectMapper();
 
     // 三个手动注入的属性
@@ -30,19 +38,17 @@ public class Room {
     private RoomManager roomManager;
     private UserMapper userMapper;
 
-    private static final int MAX_ROW = 15;
-    private static final int MAX_COL = 15;
-
-    // 有三种状态，0 代表没人下，1表示用户1下的，2表示用户2下的
-    private int[][] broad = new int[MAX_ROW][MAX_COL];
-
     @SneakyThrows
     public void putChess(String requestJSON) {
+        // 处理json字符串成落子请求对象
         DropsRequest dropsRequest = objectMapper.readValue(requestJSON, DropsRequest.class);
-        if (dropsRequest.getMessage().equals("putChess")) {
+        // 检查请求特征
+        if ("putChess".equals(dropsRequest.getMessage())) {
+            // 得到当前棋子的状态，如果是玩家一下的，棋盘上就赋值 1， 玩家二下的，棋盘上就赋值 2，用来区分不同玩家的棋子
             int chess = dropsRequest.getUserId() == user1.getId() ? 1 : 2;
             int row = dropsRequest.getRow();
             int col = dropsRequest.getCol();
+            // 当前玩家已经有棋子了
             if (broad[row][col] != 0) {
                 System.out.println("当前位置已经有子了 + row: " + row + " col: " + col);
                 return;
@@ -54,15 +60,17 @@ public class Room {
             // 返回棋盘打印棋子信息
             WebSocketSession session1 = onlineUserState.getSessionRoom(user1.getId());
             WebSocketSession session2 = onlineUserState.getSessionRoom(user2.getId());
+            // 创建一个落子响应
             DropsResponse dropsResponse = new DropsResponse();
             dropsResponse.setMessage("putChess");
             dropsResponse.setRow(row);
             dropsResponse.setCol(col);
+            // 胜利人id
             dropsResponse.setWinUserId(winner);
             dropsResponse.setUserId(dropsRequest.getUserId());
             if (session1 == null) {
-                 // 玩家一掉线，判断玩家二胜利
-                 dropsResponse.setWinUserId(user1.getId());
+                // 玩家一掉线，判断玩家二胜利
+                dropsResponse.setWinUserId(user1.getId());
             }
             if (session2 == null) {
                 // 玩家二掉线，判断玩家一胜利
@@ -122,10 +130,10 @@ public class Room {
         for (int r = row - 4; r <= row; r++) {
             try {
                 if (broad[r][col] == chess
-                    && broad[r + 1][col] == chess
-                    && broad[r + 2][col] == chess
-                    && broad[r + 3][col] == chess
-                    && broad[r + 4][col] == chess) {
+                        && broad[r + 1][col] == chess
+                        && broad[r + 2][col] == chess
+                        && broad[r + 3][col] == chess
+                        && broad[r + 4][col] == chess) {
                     return chess == 1? user1.getId() : user2.getId();
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
@@ -137,10 +145,10 @@ public class Room {
         for (int r = row - 4, c = col - 4; r <= row && c <= col; r++, c++) {
             try {
                 if (broad[r][c] == chess
-                    && broad[r + 1][c + 1] == chess
-                    && broad[r + 2][c + 2] == chess
-                    && broad[r + 3][c + 3] == chess
-                    && broad[r + 4][c + 4] == chess) {
+                        && broad[r + 1][c + 1] == chess
+                        && broad[r + 2][c + 2] == chess
+                        && broad[r + 3][c + 3] == chess
+                        && broad[r + 4][c + 4] == chess) {
                     return chess == 1? user1.getId() : user2.getId();
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
@@ -153,10 +161,10 @@ public class Room {
         for (int r = row + 4, c = col - 4; r <= row && c <= col; r++, c++) {
             try {
                 if (broad[r][c] == chess
-                    && broad[r + 1][c - 1] == chess
-                    && broad[r + 2][c - 2] == chess
-                    && broad[r + 3][c - 3] == chess
-                    && broad[r + 4][c - 4] == chess) {
+                        && broad[r + 1][c - 1] == chess
+                        && broad[r + 2][c - 2] == chess
+                        && broad[r + 3][c - 3] == chess
+                        && broad[r + 4][c - 4] == chess) {
                     return chess == 1? user1.getId() : user2.getId();
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
@@ -170,6 +178,7 @@ public class Room {
     public Room() {
         // 创建roomId
         roomId = UUID.randomUUID().toString();
+        // 手动注入属性
         onlineUserState = JavaGobangApplication.context.getBean(OnlineUserState.class);
         roomManager = JavaGobangApplication.context.getBean(RoomManager.class);
         userMapper = JavaGobangApplication.context.getBean(UserMapper.class);

@@ -44,24 +44,48 @@
 
     initUser();
 
+    // websocket 连接，创建URL
     var webSocketURL = "ws://" + location.host + "/findmatch";
     var webSocket = new WebSocket(webSocketURL);
 
+    // 当和服务器创建连接时执行的方法
     webSocket.onopen = function () {
         console.log("建立连接");
     }
 
+    // 当连接出现异常时执行的方法
     webSocket.onerror = function () {
         console.log("出现异常");
     }
 
+    // 当连接关闭时执行的方法
     webSocket.onclose = function () {
         console.log("关闭连接");
     }
 
-    // 监听浏览器的关闭时间
+    // 浏览器直接关闭标签页时执行的方法，要手动把WebSocket关闭
     window.onbeforeunload = function() {
         webSocket.close();
+    }
+
+    // 点击大厅按钮来控制当前用户是否匹配
+    function match() {
+        var matchButton = document.querySelector('#match-button');
+        if (matchButton.innerHTML === "开始匹配") {
+            // 点击按钮后如果按钮内容是开始匹配，说明当前用户需要匹配，给服务器发送请求来开始匹配，将当前用户放入匹配队列
+            webSocket.send(JSON.stringify({
+                message: 'startMatch'
+            }));
+        } else if (matchButton.innerHTML === "正在匹配...(点击停止)") {
+            // 点击这个按钮表明当前用户需要取消匹配，给服务器发送请求来取消匹配，将当前用户从匹配队列取出
+            webSocket.send(JSON.stringify({
+                message: 'stopMatch'
+            }));
+        } else {
+            // 表明当前连接出现错误，直接定向到登录界面
+            alert("连接断开，请重试！");
+            location.replace("/login.html");
+        }
     }
 
     // 处理服务器返回的响应，响应格式
@@ -75,41 +99,28 @@
 
         if (!result.ok) {
             console.log("收到了失败响应" + result.reason);
+            return;
         }
 
+        // 根据服务器来修改前端显示的内容
         let matchButton = document.querySelector('#match-button');
         if (result.message === "startMatch") {
-            // 正在匹配
+            // 如果返回这个参数，就表示服务器已经开始匹配，用户进入匹配队列，前端可以显示正在匹配的字样
             matchButton.innerHTML = '正在匹配...(点击停止)';
         } else if (result.message === "stopMatch") {
-            // 取消匹配
+            // 返回这个参数表明服务器已经停止匹配
             matchButton.innerHTML = '开始匹配';
         } else if (result.message === "matchSuccess") {
-            // 匹配成功
+            // 匹配成功，当前用户加载到房间页面中
             location.replace("/game_rome.html");
         } else if (result.message === "repeatConnection") {
-            // 禁止多开
+            // 返回这个响应参数，表明当前两个相同用户同时在大厅界面或同时在房间页面，或既在大厅界面又在房间页面
+            // 多开关闭WebSocket连接，多余的那个用户然后加载到登录界面
             alert(result.reason);
             webSocket.close();
             location.replace("/login.html");
         } else {
             alert("非法响应");
-        }
-    }
-
-    function match() {
-        var matchButton = document.querySelector('#match-button');
-        if (matchButton.innerHTML === "开始匹配") {
-            webSocket.send(JSON.stringify({
-                message: 'startMatch'
-            }));
-        } else if (matchButton.innerHTML === "正在匹配...(点击停止)") {
-            webSocket.send(JSON.stringify({
-                message: 'stopMatch'
-            }));
-        } else {
-            alert("连接断开，请重试！");
-            location.replace("/login.html");
         }
     }
 

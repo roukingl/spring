@@ -13,7 +13,7 @@ create table userinfo(
     win_count int not null default 0,
     create_time decimal not null default now(),
     update_time decimal not null default now()
-)character set = utf8;
+);
 
 insert into userinfo(username, password) values ('张三', '123');
 insert into userinfo(username, password) values ('李四', '123');
