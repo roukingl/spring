@@ -76,6 +76,7 @@ public class Room {
                 // 玩家二掉线，判断玩家一胜利
                 dropsResponse.setWinUserId(user2.getId());
             }
+
             if (session1 != null) {
                 // 如果玩家一在线就发给玩家一
                 String response = objectMapper.writeValueAsString(dropsResponse);

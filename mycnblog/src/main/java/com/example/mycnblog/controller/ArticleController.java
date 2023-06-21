@@ -75,6 +75,7 @@ public class ArticleController {
         if (userinfo == null || userinfo.getId() <= 0) {
             return AjaxResult.fail(-1, "非法访问");
         }
+        articleinfo.setState(0);
         articleinfo.setUid(userinfo.getId());
         int row = articleService.insertArticleService(articleinfo);
         return AjaxResult.success(row);
