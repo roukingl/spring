@@ -21,6 +21,7 @@ public class Room {
     private User user1;
     private User user2;
 
+
     // 谁是先手
     private int firstUserId;
 
@@ -83,7 +84,7 @@ public class Room {
                 session1.sendMessage(new TextMessage(response));
             }
             if (session2 != null) {
-                // 玩家二在下就发给玩家二
+                //玩家二在下就发给玩家二
                 String response = objectMapper.writeValueAsString(dropsResponse);
                 session2.sendMessage(new TextMessage(response));
             }
