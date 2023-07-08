@@ -21,7 +21,6 @@ public class Room {
     private User user1;
     private User user2;
 
-
     // 谁是先手
     private int firstUserId;
 
