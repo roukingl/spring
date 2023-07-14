@@ -20,6 +20,7 @@ public class Room {
     // 一个房间里的两个用户
     private User user1;
     private User user2;
+
     // 谁是先手
     private int firstUserId;
 
