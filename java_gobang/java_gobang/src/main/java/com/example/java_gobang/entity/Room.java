@@ -71,11 +71,11 @@ public class Room {
             dropsResponse.setUserId(dropsRequest.getUserId());
             if (session1 == null) {
                 // 玩家一掉线，判断玩家二胜利
-                dropsResponse.setWinUserId(user1.getId());
+                dropsResponse.setWinUserId(user2.getId());
             }
             if (session2 == null) {
                 // 玩家二掉线，判断玩家一胜利
-                dropsResponse.setWinUserId(user2.getId());
+                dropsResponse.setWinUserId(user1.getId());
             }
 
             if (session1 != null) {

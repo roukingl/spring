@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 
 
 @RestController
@@ -50,4 +52,25 @@ public class UserController {
         User resultUser = userService.getUserByIdService(userId);
         return AjaxResult.success(resultUser);
     }
+
+    @PostMapping("/searchuserid")
+    public AjaxResult searchUserId(@RequestParam("userCharacter") String userCharacter, HttpServletRequest request) {
+        User user = UserSessionUtils.getUser(request);
+        if (user == null) {
+            return AjaxResult.fail(2, "非法访问");
+        }
+        ArrayList<Integer> userIdList = userService.getUserIdListByCharacter(userCharacter);
+        return AjaxResult.success(userIdList);
+    }
+
+    @PostMapping("/searchuserinformation")
+    public AjaxResult searchUserInformation(@RequestParam("list") ArrayList<Integer> userIdList, HttpServletRequest request) {
+        User user = UserSessionUtils.getUser(request);
+        if (user == null) {
+            return AjaxResult.fail(2, "非法访问");
+        }
+        ArrayList<User> userList = userService.getUserListById(userIdList);
+        return AjaxResult.success(userList);
+    }
+
 }

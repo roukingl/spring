@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索用户列表</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/game_hall.css">
+</head>
+<body>
+<div class="nav">五子棋对战</div>
+
+<div class="search-container">
+
+</div>
+
+<script src="js/jquery.min.js"></script>
+<script>
+
+    function getUserCharacter() {
+        var userIdList = localStorage.getItem("list");
+        jQuery.ajax({
+            url: '/user/searchuserinformation',
+            type: 'post',
+            data: {"list": userIdList},
+            success: function (result) {
+                if (result != null && result.status === 200 && result.data != null) {
+                    var information = "";
+                    for (var i = 0; i < result.data.length; i++) {
+                        var user = result.data[i];
+                        information += '<div class="search-user" id="' +
+                            user.id + '">';
+                        information += "用户id: " + user.id + " 用户名: " + user.username + " 天梯积分: " + user.score + " 总场次: " + user.total_count + " 胜利场次: " + user.win_count;
+                        information += '<button class="concern" onclick="concern(' +
+                            user.id + ')">关注';
+                        information += '</button>';
+                        information += '</div>';
+
+                    }
+                    jQuery("#search-container").html(information);
+                }
+            }
+        });
+    }
+
+    getUserCharacter();
+
+    function concern(id) {
+        var userInformation = jQuery("#id");
+
+    }
+</script>
+</body>
+</html>

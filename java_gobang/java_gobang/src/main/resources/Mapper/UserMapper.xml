@@ -11,7 +11,7 @@
     </select>
 
     <select id="selectUserById" resultType="com.example.java_gobang.entity.User">
-        select * from userinfo where id = #{id}
+        select id, username, score, total_count, win_count from userinfo where id = #{id}
     </select>
 
     <update id="userWinUpdate">
@@ -23,4 +23,8 @@
         update userinfo set score = score - 30, total_count = total_count + 1
         where id = #{id}
     </update>
+    
+    <select id="selectUserListByCharacter" resultType="java.lang.Integer">
+        select id from userinfo where username like concat('%', #{userName}, '%')
+    </select>
 </mapper>

@@ -9,7 +9,12 @@
     <link rel="stylesheet" href="css/game_hall.css">
 </head>
 <body>
-<div class="nav">五子棋对战</div>
+<div class="nav">
+    五子棋对战
+    <input type="text" id="user-characteristics" placeholder="输入要搜索用户的用户名"><label
+        for="user-characteristics">&nbsp&nbsp</label>
+    <button id="search-button" onclick="userSearch()">搜索用户</button>
+</div>
 <!-- 整个页面的容器元素 -->
 <div class="container">
     <!-- 这个 div 在 container 中是处于垂直水平居中这样的位置的 -->
@@ -23,6 +28,22 @@
 
 <script src="js/jquery.min.js"></script>
 <script>
+
+    function userSearch() {
+        var userCharacter = jQuery("#user-characteristics");
+        jQuery.ajax({
+            url: '/user/searchuserid',
+            type: 'post',
+            data: {"userCharacter": userCharacter.val()},
+            success: function (result) {
+                if (result != null && result.status === 200 && result.data != null) {
+                    localStorage.setItem("list", result.data);
+                    location.replace("/search_user_list.html");
+                }
+            }
+        });
+    }
+
     function initUser() {
         // 进行游戏大厅初始化，查询该用户信息
         jQuery.ajax({

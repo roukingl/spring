@@ -4,6 +4,8 @@ import com.example.java_gobang.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.ArrayList;
+
 @Mapper
 public interface UserMapper {
 
@@ -39,4 +41,7 @@ public interface UserMapper {
      * @param id 败方id
      */
     void userLoseUpdate(@Param("id") Integer id);
+
+    ArrayList<Integer> selectUserListByCharacter(@Param("userName") String userCharacter);
+
 }

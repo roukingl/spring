@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 
 @Service
 public class UserService {
@@ -40,5 +41,18 @@ public class UserService {
     public User getUserByIdService(Integer userId) {
         return userMapper.selectUserById(userId);
     }
+
+    public ArrayList<Integer> getUserIdListByCharacter(String userCharacter) {
+        return userMapper.selectUserListByCharacter(userCharacter);
+    }
+
+    public ArrayList<User> getUserListById(ArrayList<Integer> userIdList) {
+        ArrayList<User> userList = new ArrayList<>();
+        for (Integer integer : userIdList) {
+            userList.add(userMapper.selectUserById(integer));
+        }
+        return userList;
+    }
+
 
 }

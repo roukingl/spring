@@ -93,8 +93,6 @@ public class MatchHandler extends TextWebSocketHandler {
             onlineUserState.exitSessionHall(user.getId());
         }
         matchQueue.removeUserFromQueue(user);
-
-
     }
 
     // 在连接关闭时执行
