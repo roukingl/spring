@@ -1,6 +1,7 @@
 package com.example.java_gobang.mapper;
 
 import com.example.java_gobang.entity.User;
+import com.example.java_gobang.entity.vo.UserVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -43,5 +44,7 @@ public interface UserMapper {
     void userLoseUpdate(@Param("id") Integer id);
 
     ArrayList<Integer> selectUserListByCharacter(@Param("userName") String userCharacter);
+
+    UserVO selectUserVOById(@Param("id") Integer id);
 
 }

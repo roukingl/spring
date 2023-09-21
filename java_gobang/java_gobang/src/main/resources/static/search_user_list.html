@@ -11,7 +11,7 @@
 <body>
 <div class="nav">五子棋对战</div>
 
-<div class="search-container">
+<div class="search-container" id="serach-total">
 
 </div>
 
@@ -28,17 +28,18 @@
                 if (result != null && result.status === 200 && result.data != null) {
                     var information = "";
                     for (var i = 0; i < result.data.length; i++) {
+                        // 执行一个函数，检查当前用户搜索的用户有没有关注，关注则把内容改为已关注
                         var user = result.data[i];
-                        information += '<div class="search-user" id="' +
-                            user.id + '">';
+                        var whetherFollow = getContent(user.id);
+                        information += '<div class="search-user">';
                         information += "用户id: " + user.id + " 用户名: " + user.username + " 天梯积分: " + user.score + " 总场次: " + user.total_count + " 胜利场次: " + user.win_count;
-                        information += '<button class="concern" onclick="concern(' +
+                        information += '<button class="concern" id="' + user.id + '" onclick="concern(' +
                             user.id + ')">关注';
                         information += '</button>';
                         information += '</div>';
 
                     }
-                    jQuery("#search-container").html(information);
+                    jQuery("#serach-total").html(information);
                 }
             }
         });
@@ -46,8 +47,43 @@
 
     getUserCharacter();
 
+    function content(id) {
+        
+    }
+
     function concern(id) {
-        var userInformation = jQuery("#id");
+        // 点进来需要判断是已关注字样还是关注字样
+        var buttonValue = jQuery("input[name='id']").val();
+        if(buttonValue === "关注") {
+            jQuery.ajax({
+                url: '/follow/add',
+                type: 'post',
+                data: {"followedId": id},
+                success: function(result) {
+                    if (result != null && result.status === 200 && result.data === 1) {
+                        // 把关注改为已关注
+                        buttonValue.innerHTML = "已关注";
+                    } else {
+                        alert("关注失败请重试！");
+                    }
+                }
+            });
+        } else if (buttonValue === "已关注") {
+            jQuery.ajax({
+                url: '/follow/delete',
+                type: 'post',
+                data: {"followedId": id},
+                success: function(result) {
+                    if (result != null && result.status === 200 && result.data === 1) {
+                        // 已关注改为关注，表示取消关注了
+                        buttonValue.innerHTML = "已关注";
+                    } else {
+                        alert("取消关注失败，请重试！");
+                    }
+                }
+            });
+        }
+        
 
     }
 </script>

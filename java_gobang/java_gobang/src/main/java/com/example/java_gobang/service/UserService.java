@@ -2,6 +2,7 @@ package com.example.java_gobang.service;
 
 import com.example.java_gobang.common.AppVariable;
 import com.example.java_gobang.entity.User;
+import com.example.java_gobang.entity.vo.UserVO;
 import com.example.java_gobang.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,12 +47,16 @@ public class UserService {
         return userMapper.selectUserListByCharacter(userCharacter);
     }
 
-    public ArrayList<User> getUserListById(ArrayList<Integer> userIdList) {
-        ArrayList<User> userList = new ArrayList<>();
+    public ArrayList<User> getUserVOListById(ArrayList<Integer> userIdList) {
+        ArrayList<UserVO> userVOList = new ArrayList<>();
         for (Integer integer : userIdList) {
-            userList.add(userMapper.selectUserById(integer));
+            UserVO userVO = (UserVO) userMapper.selectUserById(integer);
+            // 如果根据登录用户id和传输用户id两个属性从followinfo表中查找到的值等于1，则赋值true，否则赋值false
+
+            userVO.setWhetherFollow();
+            userVOList.add();
         }
-        return userList;
+        return userVOList;
     }
 
 

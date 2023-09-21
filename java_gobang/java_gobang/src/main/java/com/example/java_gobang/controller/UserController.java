@@ -3,6 +3,7 @@ package com.example.java_gobang.controller;
 import com.example.java_gobang.common.AjaxResult;
 import com.example.java_gobang.common.UserSessionUtils;
 import com.example.java_gobang.entity.User;
+import com.example.java_gobang.entity.vo.UserVO;
 import com.example.java_gobang.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -65,12 +66,16 @@ public class UserController {
 
     @PostMapping("/searchuserinformation")
     public AjaxResult searchUserInformation(@RequestParam("list") ArrayList<Integer> userIdList, HttpServletRequest request) {
+        if (userIdList == null) {
+            return AjaxResult.fail(1, "参数错误");
+        }
         User user = UserSessionUtils.getUser(request);
         if (user == null) {
             return AjaxResult.fail(2, "非法访问");
         }
-        ArrayList<User> userList = userService.getUserListById(userIdList);
-        return AjaxResult.success(userList);
+        // 返回用户的视图，增加一个属性表示是否为当前用户关注
+        ArrayList<UserVO> userVOList = userService.getUserVOListById(userIdList);
+        return AjaxResult.success(userVOList);
     }
 
 }
