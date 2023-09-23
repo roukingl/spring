@@ -9,4 +9,6 @@ public interface FollowMapper {
     int insertUserFollow(@Param("userId") int userId, @Param("followId") int followId);
 
     int deleteUserFollow(@Param("userId") int userId);
+
+    int judgementIsFollow(@Param("userId") Integer userId, @Param("followedId") Integer followedId);
 }

@@ -74,7 +74,7 @@ public class UserController {
             return AjaxResult.fail(2, "非法访问");
         }
         // 返回用户的视图，增加一个属性表示是否为当前用户关注
-        ArrayList<UserVO> userVOList = userService.getUserVOListById(userIdList);
+        ArrayList<UserVO> userVOList = userService.getUserVOListById(userIdList, user.getId());
         return AjaxResult.success(userVOList);
     }
 

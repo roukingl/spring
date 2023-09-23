@@ -27,4 +27,9 @@
     <select id="selectUserListByCharacter" resultType="java.lang.Integer">
         select id from userinfo where username like concat('%', #{userName}, '%')
     </select>
+
+    <select id="selectUserVOById" resultType="com.example.java_gobang.entity.vo.UserVO">
+        select id, username, score, total_count, win_count from userinfo where id = #{followedId}
+    </select>
+
 </mapper>

@@ -30,26 +30,24 @@
                     for (var i = 0; i < result.data.length; i++) {
                         // 执行一个函数，检查当前用户搜索的用户有没有关注，关注则把内容改为已关注
                         var user = result.data[i];
-                        var whetherFollow = getContent(user.id);
+                        var followContent = user.whetherFollow ? "已关注" : "未关注";
                         information += '<div class="search-user">';
                         information += "用户id: " + user.id + " 用户名: " + user.username + " 天梯积分: " + user.score + " 总场次: " + user.total_count + " 胜利场次: " + user.win_count;
                         information += '<button class="concern" id="' + user.id + '" onclick="concern(' +
-                            user.id + ')">关注';
+                            user.id + ')">' + followContent;
                         information += '</button>';
                         information += '</div>';
 
                     }
                     jQuery("#serach-total").html(information);
+                } else {
+                    alert("搜索失败，请重试！");
                 }
             }
         });
     }
 
     getUserCharacter();
-
-    function content(id) {
-        
-    }
 
     function concern(id) {
         // 点进来需要判断是已关注字样还是关注字样

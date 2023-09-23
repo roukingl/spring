@@ -10,4 +10,8 @@
     <delete id="deleteUserFollow">
         delete from followinfo where user_id = #{userId}
     </delete>
+
+    <select id="judgementIsFollow" resultType="java.lang.Integer">
+        select user_id from followinfo where user_id = #{userId} and followed_id = #{followedId}
+    </select>
 </mapper>

@@ -45,6 +45,6 @@ public interface UserMapper {
 
     ArrayList<Integer> selectUserListByCharacter(@Param("userName") String userCharacter);
 
-    UserVO selectUserVOById(@Param("id") Integer id);
+    UserVO selectUserVOById(@Param("followedId") Integer followedId);
 
 }
