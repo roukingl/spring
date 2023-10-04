@@ -51,7 +51,6 @@ public class UserService {
         return userMapper.selectUserListByCharacter(userCharacter);
     }
 
-
     public ArrayList<UserVO> getUserVOListById(ArrayList<Integer> userIdList, int userId) {
         ArrayList<UserVO> userVOList = new ArrayList<>();
         for (int followedId : userIdList) {
