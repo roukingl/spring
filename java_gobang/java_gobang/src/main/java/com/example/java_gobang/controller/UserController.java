@@ -75,8 +75,29 @@ public class UserController {
         }
         System.out.println(Arrays.toString(userIdList.toArray()));
         // 返回用户的视图，增加一个属性表示是否为当前用户关注
-        List<UserVO> userVOList = userService.getUserVOListById(userIdList, user.getId());
+        List<UserVO> userVOList = userService.getUserVOListById(userIdList, user);
         return AjaxResult.success(userVOList);
     }
+
+    // 得到该用户关注的所有人和信息
+    @PostMapping("/getfollowed")
+    public AjaxResult getFollowedUser(HttpServletRequest request) {
+        User user = UserSessionUtils.getUser(request);
+        if (user == null) {
+            return AjaxResult.fail(2, "非法访问");
+        }
+        List<User> list = userService.getFollowedUserService(user);
+        return AjaxResult.success(list);
+    }
+
+    public AjaxResult getFansUser(HttpServletRequest request) {
+        User user = UserSessionUtils.getUser(request);
+        if (user == null) {
+            return AjaxResult.fail(2, "非法访问");
+        }
+        List<User> list = userService.getFansUserService(user);
+        return AjaxResult.success(list);
+    }
+
 
 }

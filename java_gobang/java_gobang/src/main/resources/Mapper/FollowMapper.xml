@@ -14,4 +14,12 @@
     <select id="judgementIsFollow" resultType="java.lang.Integer">
         select user_id from followinfo where user_id = #{userId} and followed_id = #{followedId}
     </select>
+
+    <select id="getFollowedId" resultType="java.lang.Integer">
+        select user_id from followinfo where user_id = #{userId}
+    </select>
+
+    <select id="getFansId" resultType="java.lang.Integer">
+        select user_id from followinfo where followed_id = #{followedId}
+    </select>
 </mapper>

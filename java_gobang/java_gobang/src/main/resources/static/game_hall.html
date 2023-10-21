@@ -9,25 +9,28 @@
     <link rel="stylesheet" href="css/game_hall.css">
 </head>
 <body>
-<div class="nav">
-    五子棋对战
-    <input type="text" id="user-characteristics" placeholder="输入要搜索用户的用户名"><label
-        for="user-characteristics">&nbsp&nbsp</label>
-    <button id="search-button" onclick="userSearch()">搜索用户</button>
-</div>
-<!-- 整个页面的容器元素 -->
-<div class="container">
-    <!-- 这个 div 在 container 中是处于垂直水平居中这样的位置的 -->
-    <div>
-        <!-- 展示用户信息 -->
-        <div id="screen"></div>
-        <!-- 匹配按钮 -->
-        <div id="match-button" onclick="match()">开始匹配</div>
-    </div>
-</div>
+    <div class="nav">
+        五子棋对战
+        <input type="text" id="user-characteristics" placeholder="输入要搜索用户的用户名"><label
+            for="user-characteristics">&nbsp&nbsp</label>
+        <button id="search-button" onclick="userSearch()">搜索用户</button>
 
-<script src="js/jquery.min.js"></script>
-<script>
+        <a href="/followed.html">关注</a>
+        <a href="/fans.html">粉丝</a>
+    </div>
+    <!-- 整个页面的容器元素 -->
+    <div class="container">
+        <!-- 这个 div 在 container 中是处于垂直水平居中这样的位置的 -->
+        <div>
+            <!-- 展示用户信息 -->
+            <div id="screen"></div>
+            <!-- 匹配按钮 -->
+            <div id="match-button" onclick="match()">开始匹配</div>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script>
 
     function userSearch() {
         var userCharacter = jQuery("#user-characteristics");
@@ -145,6 +148,6 @@
         }
     }
 
-</script>
+    </script>
 </body>
 </html>

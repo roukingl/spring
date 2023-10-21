@@ -31,7 +31,7 @@
                         // 执行一个函数，检查当前用户搜索的用户有没有关注，关注则把内容改为已关注
                         var user = result.data[i];
                         var followContent = user.whetherFollow ? "已关注" : "未关注";
-                        var followInt
+                        var followInt;
                         if (followContent === "已关注") {
                             followInt = 1;
                         } else {
@@ -55,7 +55,7 @@
 
     getUserCharacter();
 
-    function concern(id, followInt) {
+    function concern(followedId, followInt) {
         // 点进来需要判断是已关注字样还是关注字样
         // 根据followInt参数判断是已关注还是未关注
         if(followInt == 0) {
@@ -63,7 +63,7 @@
             jQuery.ajax({
                 url: '/follow/add',
                 type: 'post',
-                data: {"followedId": id},
+                data: {"followedId": followedId},
                 success: function(result) {
                     if (result != null && result.status === 200 && result.data === 1) {
                         // 添加完成后，重定向到当前界面，重新判断关注关系
@@ -78,7 +78,7 @@
             jQuery.ajax({
                 url: '/follow/delete',
                 type: 'post',
-                data: {"followedId": id},
+                data: {"followedId": followedId},
                 success: function(result) {
                     if (result != null && result.status === 200 && result.data === 1) {
                         // 重新判断关注关系
