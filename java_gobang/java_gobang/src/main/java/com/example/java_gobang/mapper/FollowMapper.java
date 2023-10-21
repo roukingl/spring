@@ -6,9 +6,9 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface FollowMapper {
 
-    int insertUserFollow(@Param("userId") int userId, @Param("followId") int followId);
+    int insertUserFollow(@Param("userId") int userId, @Param("followedId") int followedId);
 
     int deleteUserFollow(@Param("userId") int userId);
 
-    int judgementIsFollow(@Param("userId") Integer userId, @Param("followedId") Integer followedId);
+    Integer judgementIsFollow(@Param("userId") Integer userId, @Param("followedId") Integer followedId);
 }

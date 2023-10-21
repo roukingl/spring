@@ -11,8 +11,8 @@ public class FollowService {
     @Autowired
     private FollowMapper followMapper;
 
-    public int addUserFollowService(int userId, int followId) {
-        return followMapper.insertUserFollow(userId, followId);
+    public int addUserFollowService(int userId, int followedId) {
+        return followMapper.insertUserFollow(userId, followedId);
     }
 
     public int removeFollowService(int userId) {

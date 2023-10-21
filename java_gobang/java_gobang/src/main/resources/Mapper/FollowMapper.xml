@@ -4,7 +4,7 @@
 
     <insert id="insertUserFollow">
         insert into followinfo(user_id, followed_id, create_time, detate_time)
-        values (#{userId}, #{follwoId}, now(), now())
+        values (#{userId}, #{followedId}, now(), now())
     </insert>
 
     <delete id="deleteUserFollow">

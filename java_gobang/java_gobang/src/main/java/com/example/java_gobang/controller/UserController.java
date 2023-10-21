@@ -7,13 +7,12 @@ import com.example.java_gobang.entity.vo.UserVO;
 import com.example.java_gobang.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 @RestController
@@ -60,12 +59,13 @@ public class UserController {
         if (user == null) {
             return AjaxResult.fail(2, "非法访问");
         }
+        System.out.println(userCharacter);
         ArrayList<Integer> userIdList = userService.getUserIdListByCharacter(userCharacter);
         return AjaxResult.success(userIdList);
     }
 
     @PostMapping("/searchuserinformation")
-    public AjaxResult searchUserInformation(@RequestParam("list") ArrayList<Integer> userIdList, HttpServletRequest request) {
+    public AjaxResult searchUserInformation(@RequestParam("list") List<Integer> userIdList, HttpServletRequest request) {
         if (userIdList == null) {
             return AjaxResult.fail(1, "参数错误");
         }
@@ -73,8 +73,9 @@ public class UserController {
         if (user == null) {
             return AjaxResult.fail(2, "非法访问");
         }
+        System.out.println(Arrays.toString(userIdList.toArray()));
         // 返回用户的视图，增加一个属性表示是否为当前用户关注
-        ArrayList<UserVO> userVOList = userService.getUserVOListById(userIdList, user.getId());
+        List<UserVO> userVOList = userService.getUserVOListById(userIdList, user.getId());
         return AjaxResult.success(userVOList);
     }
 

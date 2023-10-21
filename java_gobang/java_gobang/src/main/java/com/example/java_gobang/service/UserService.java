@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -51,13 +52,17 @@ public class UserService {
         return userMapper.selectUserListByCharacter(userCharacter);
     }
 
-    public ArrayList<UserVO> getUserVOListById(ArrayList<Integer> userIdList, int userId) {
-        ArrayList<UserVO> userVOList = new ArrayList<>();
+    public List<UserVO> getUserVOListById(List<Integer> userIdList, int userId) {
+        List<UserVO> userVOList = new ArrayList<>();
+
         for (int followedId : userIdList) {
             // 从数据库中得到用户的信息，然后在用得到的用户id和登录用户id查询是否有关注关系，返回关注主体用户id判断是否是登录用户id，是
             // 就说明是已关注，就往whetherFollow字段赋值true
             UserVO userVO = userMapper.selectUserVOById(followedId);
-            userVO.setWhetherFollow(followMapper.judgementIsFollow(userId, followedId) == userId);
+
+            Integer followUser = followMapper.judgementIsFollow(userId, followedId);
+            System.out.println(followUser);
+            userVO.setWhetherFollow(Integer.valueOf(userId).equals(followUser));
             userVOList.add(userVO);
         }
         return userVOList;
