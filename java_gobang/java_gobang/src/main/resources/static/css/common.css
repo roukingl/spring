@@ -44,3 +44,25 @@ html, body {
     align-items: center;
     justify-content: center;
 }
+
+.container .information {
+    width: auto;
+    height: calc(100% - 50px);
+
+    display: flex;
+    align-items:flex-start;
+    
+}
+
+
+.nav .hall {
+    color: white;
+}
+
+.nav .fans {
+    color: white;
+}
+
+.nav .followed {
+    color: white;
+}

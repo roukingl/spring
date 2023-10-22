@@ -3,7 +3,7 @@
     width: 400px;
     height: 200px;
     font-size: 20px;
-    background-color: gray;
+    background-color: gray; 
     color: white;
     border-radius: 10px;
 
@@ -29,4 +29,26 @@
 
 #match-button:active {
     background-color: gray;
+}
+
+#followed {
+    width: 150px;
+    height: auto;
+    background-color: rgb(55, 177, 230); 
+    font-size: 20px;
+    border-radius: 10px;
+
+    line-height: 30px;
+    text-align: center;
+}
+
+#fans {
+    width: 150px;
+    height: auto;
+    background-color: rgb(199, 251, 189); 
+    font-size: 20px;
+    border-radius: 10px;
+
+    text-align: center;
+    line-height: 30px;
 }

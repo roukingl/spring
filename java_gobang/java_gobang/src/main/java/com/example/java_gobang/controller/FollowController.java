@@ -44,7 +44,7 @@ public class FollowController {
         if (user == null) {
             return AjaxResult.fail(2, "非法访问");
         }
-        int row = followService.removeFollowService(user.getId());
+        int row = followService.removeFollowService(user.getId(), followedId);
         return AjaxResult.success(row);
     }
 

@@ -15,7 +15,7 @@ public class FollowService {
         return followMapper.insertUserFollow(userId, followedId);
     }
 
-    public int removeFollowService(int userId) {
-        return followMapper.deleteUserFollow(userId);
+    public int removeFollowService(int userId, int followedId) {
+        return followMapper.deleteUserFollow(userId, followedId);
     }
 }

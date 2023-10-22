@@ -8,18 +8,28 @@
     </insert>
 
     <delete id="deleteUserFollow">
-        delete from followinfo where user_id = #{userId}
+        delete from followinfo where user_id = #{userId} and followed_id = #{followedId}
     </delete>
 
     <select id="judgementIsFollow" resultType="java.lang.Integer">
         select user_id from followinfo where user_id = #{userId} and followed_id = #{followedId}
     </select>
 
-    <select id="getFollowedId" resultType="java.lang.Integer">
-        select user_id from followinfo where user_id = #{userId}
+    <select id="selectFollowedId" resultType="java.lang.Integer">
+        select followed_id from followinfo where user_id = #{userId}
     </select>
 
-    <select id="getFansId" resultType="java.lang.Integer">
+    <select id="selectFansId" resultType="java.lang.Integer">
         select user_id from followinfo where followed_id = #{followedId}
+    </select>
+
+    <select id="selectFollowedUserHallList" resultType="com.example.java_gobang.entity.vo.UserVOHall">
+        select u.id, u.username from userinfo u inner join followinfo
+                    on u.id = followinfo.followed_id and followinfo.user_id = #{userId}
+    </select>
+
+    <select id="selectFansUserHallList" resultType="com.example.java_gobang.entity.vo.UserVOHall">
+        select u.id, u.username from userinfo u inner join followinfo
+            on u.id = followinfo.user_id and followinfo.followed_id = #{followedId}
     </select>
 </mapper>

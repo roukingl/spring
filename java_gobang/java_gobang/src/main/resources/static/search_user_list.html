@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,88 +9,93 @@
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/game_hall.css">
 </head>
+
 <body>
-<div class="nav">五子棋对战</div>
+    <div class="nav">
+        五子棋对战
+        <a href="/game_hall.html" class="hall">大厅</a>
+    </div>
 
-<div class="search-container" id="serach-total">
+    <div class="search-container" id="serach-total">
 
-</div>
+    </div>
 
-<script src="js/jquery.min.js"></script>
-<script>
+    <script src="js/jquery.min.js"></script>
+    <script>
 
-    function getUserCharacter() {
-        var userIdList = localStorage.getItem("list");
-        jQuery.ajax({
-            url: '/user/searchuserinformation',
-            type: 'post',
-            data: {"list": userIdList},
-            success: function (result) {
-                if (result != null && result.status === 200 && result.data != null) {
-                    var information = "";
-                    for (var i = 0; i < result.data.length; i++) {
-                        // 执行一个函数，检查当前用户搜索的用户有没有关注，关注则把内容改为已关注
-                        var user = result.data[i];
-                        var followContent = user.whetherFollow ? "已关注" : "未关注";
-                        var followInt;
-                        if (followContent === "已关注") {
-                            followInt = 1;
-                        } else {
-                            followInt = 0;
+        function getUserCharacter() {
+            var userIdList = localStorage.getItem("list");
+            jQuery.ajax({
+                url: '/user/searchuserinformation',
+                type: 'post',
+                data: { "list": userIdList },
+                success: function (result) {
+                    if (result != null && result.status === 200 && result.data != null) {
+                        var information = "";
+                        for (var i = 0; i < result.data.length; i++) {
+                            // 执行一个函数，检查当前用户搜索的用户有没有关注，关注则把内容改为已关注
+                            var user = result.data[i];
+                            var followContent = user.whetherFollow ? "已关注" : "未关注";
+                            var followInt;
+                            if (followContent === "已关注") {
+                                followInt = 1;
+                            } else {
+                                followInt = 0;
+                            }
+                            information += '<div class="search-user">';
+                            information += "用户id: " + user.id + " 用户名: " + user.username + " 天梯积分: " + user.score + " 总场次: " + user.total_count + " 胜利场次: " + user.win_count;
+                            information += '<button class="concern"' + ' onclick="concern(' +
+                                user.id + ', ' + followInt + ')">' + followContent;
+                            information += '</button>';
+                            information += '</div>';
+
                         }
-                        information += '<div class="search-user">';
-                        information += "用户id: " + user.id + " 用户名: " + user.username + " 天梯积分: " + user.score + " 总场次: " + user.total_count + " 胜利场次: " + user.win_count;
-                        information += '<button class="concern"' + ' onclick="concern(' +
-                            user.id + ', ' + followInt +')">' + followContent;
-                        information += '</button>';
-                        information += '</div>';
-
-                    }
-                    jQuery("#serach-total").html(information);
-                } else {
-                    alert("搜索失败，请重试！");
-                }
-            }
-        });
-    }
-
-    getUserCharacter();
-
-    function concern(followedId, followInt) {
-        // 点进来需要判断是已关注字样还是关注字样
-        // 根据followInt参数判断是已关注还是未关注
-        if(followInt == 0) {
-            // followInt == 0 说明还未关注， 需要添加关注关系
-            jQuery.ajax({
-                url: '/follow/add',
-                type: 'post',
-                data: {"followedId": followedId},
-                success: function(result) {
-                    if (result != null && result.status === 200 && result.data === 1) {
-                        // 添加完成后，重定向到当前界面，重新判断关注关系
-                        location.replace("/search_user_list.html");
+                        jQuery("#serach-total").html(information);
                     } else {
-                        alert("关注失败请重试！");
-                    }
-                }
-            });
-        } else if (followInt == 1) {
-            // 已关注说明要删除关注关系
-            jQuery.ajax({
-                url: '/follow/delete',
-                type: 'post',
-                data: {"followedId": followedId},
-                success: function(result) {
-                    if (result != null && result.status === 200 && result.data === 1) {
-                        // 重新判断关注关系
-                        location.replace("/search_user_list.html");               
-                    } else {
-                        alert("取消关注失败，请重试！");
+                        alert("搜索失败，请重试！");
                     }
                 }
             });
         }
-    }
-</script>
+
+        getUserCharacter();
+
+        function concern(followedId, followInt) {
+            // 点进来需要判断是已关注字样还是关注字样
+            // 根据followInt参数判断是已关注还是未关注
+            if (followInt == 0) {
+                // followInt == 0 说明还未关注， 需要添加关注关系
+                jQuery.ajax({
+                    url: '/follow/add',
+                    type: 'post',
+                    data: { "followedId": followedId },
+                    success: function (result) {
+                        if (result != null && result.status === 200 && result.data === 1) {
+                            // 添加完成后，重定向到当前界面，重新判断关注关系
+                            location.replace("/search_user_list.html");
+                        } else {
+                            alert("关注失败请重试！");
+                        }
+                    }
+                });
+            } else if (followInt == 1) {
+                // 已关注说明要删除关注关系
+                jQuery.ajax({
+                    url: '/follow/delete',
+                    type: 'post',
+                    data: { "followedId": followedId },
+                    success: function (result) {
+                        if (result != null && result.status === 200 && result.data === 1) {
+                            // 重新判断关注关系
+                            location.replace("/search_user_list.html");
+                        } else {
+                            alert("取消关注失败，请重试！");
+                        }
+                    }
+                });
+            }
+        }
+    </script>
 </body>
+
 </html>

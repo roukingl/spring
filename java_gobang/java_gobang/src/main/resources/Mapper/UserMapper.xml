@@ -32,4 +32,6 @@
         select id, username, score, total_count, win_count from userinfo where id = #{followedId}
     </select>
 
+
+
 </mapper>

@@ -4,6 +4,7 @@ import com.example.java_gobang.common.AjaxResult;
 import com.example.java_gobang.common.UserSessionUtils;
 import com.example.java_gobang.entity.User;
 import com.example.java_gobang.entity.vo.UserVO;
+import com.example.java_gobang.entity.vo.UserVOHall;
 import com.example.java_gobang.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -86,17 +87,39 @@ public class UserController {
         if (user == null) {
             return AjaxResult.fail(2, "非法访问");
         }
-        List<User> list = userService.getFollowedUserService(user);
-        return AjaxResult.success(list);
+        List<User> followedList = userService.getFollowedUserService(user);
+        return AjaxResult.success(followedList);
     }
 
+    @PostMapping("/getfans")
     public AjaxResult getFansUser(HttpServletRequest request) {
         User user = UserSessionUtils.getUser(request);
         if (user == null) {
             return AjaxResult.fail(2, "非法访问");
         }
-        List<User> list = userService.getFansUserService(user);
-        return AjaxResult.success(list);
+        List<UserVO> fansList = userService.getFansUserService(user);
+        return AjaxResult.success(fansList);
+    }
+
+
+    @PostMapping("/getfollowedhall")
+    public AjaxResult getFollowedUserHall(HttpServletRequest request) {
+        User user = UserSessionUtils.getUser(request);
+        if (user == null) {
+            return AjaxResult.fail(2, "非法访问");
+        }
+        List<UserVOHall> followedHallList = userService.getFollowedUserHallService(user.getId());
+        return AjaxResult.success(followedHallList);
+    }
+
+    @PostMapping("/getfanshall")
+    public AjaxResult getFansUserHall(HttpServletRequest request) {
+        User user = UserSessionUtils.getUser(request);
+        if (user == null) {
+            return AjaxResult.fail(2, "非法访问");
+        }
+        List<UserVOHall> fansHallList = userService.getFansUserHallService(user.getId());
+        return AjaxResult.success(fansHallList);
     }
 
 
