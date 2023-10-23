@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>粉丝</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/game_hall.css">
+</head>
+
+<body>
+    <div class="nav">
+        五子棋对战
+
+        <a href="/followed.html" class="followed">关注</a>
+
+    </div>
+    <div class="search-container" id="serach-total">
+
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script>
+        // 显示粉丝的信息
+        function getFans() {
+            jQuery.ajax({
+                url: '/user/getfans',
+                type: 'post',
+                data: {},
+                success: function (result) {
+                    if (result != null && result.status == 200 && result.data != null) {
+                        // 显示从后端得到的用户信息 
+                        // 返回的带有用户有没有关注该粉丝的数据
+                        var information = "";
+                        for (var i = 0; i < result.data.length; i++) {
+                            var user = result.data[i];
+
+                            information += '<div class="search-user">';
+                            information += "用户id: " + user.id + " 用户名: " + user.username + " 天梯积分: " + user.score + " 总场次: " + user.total_count + " 胜利场次: " + user.win_count;
+                            // 已关注还是未关注需要判断, 根据用户有没有互关显示粉丝按钮数据, 传递函数也需要根据改变
+                            information += '<button class="concern"' + 'onclick="concern(' +
+                                user.id + ', ' + user.whetherFollow + ')">' + (user.whetherFollow ? "已关注" : "未关注");
+                            information += '</button>';
+                            information += '</div>';
+                        }
+                        jQuery("#serach-total").html(information);
+                    } else {
+                        alert("获取粉丝信息失败，请重试!");
+                    }
+                }
+            });
+        }
+        getFans();
+
+        function concern(followedId, whetherFollow) {
+            if (whetherFollow) {
+                // 为真说明已经关注 需要取消关注
+                jQuery.ajax({
+                    url: '/follow/delete',
+                    type: 'post',
+                    data: { "followedId": followedId },
+                    success: function (result) {
+                        if (result != null && result.status == 200 && result.data == 1) {
+                            location.replace("/fans.html");
+                        } else {
+                            alert("取消关注失败");
+                        }
+                    }
+                });
+            } else {
+                // 需要添加关注的接口
+                jQuery.ajax({
+                    url: '/follow/add',
+                    type: 'post',
+                    data: {"followedId": followedId},
+                    success: function(result) {
+                        if (result != null && result.status == 200 && result.data == 1) {
+                            location.replace("/fans.html");
+                        } else {
+                            alert("关注失败");
+                        }
+                    }
+                });
+            }
+            
+
+        }
+    </script>
+
+</body>
+
+</html>

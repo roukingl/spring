@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关注</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/game_hall.css">
+</head>
+<body>
+    <div class="nav">
+        五子棋对战
+    
+        <a href="/fans.html" class="fans">粉丝</a>
+
+    </div>
+    <div class="search-container" id="serach-total">
+
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script>
+        // 显示所有关注的人
+        function getFollowed() {
+            jQuery.ajax({
+               url: '/user/getfollowed' ,
+               type: 'post',
+               data: {},
+               success: function(result) {
+                    if (result != null && result.status == 200 && result.data != null) {
+                        // 显示从后端得到的用户信息 
+                        var information = "";
+                        for (var i = 0; i < result.data.length; i++) {
+                            var user = result.data[i];
+                            information += '<div class="search-user">';
+                            information += "用户id: " + user.id + " 用户名: " + user.username + " 天梯积分: " + user.score + " 总场次: " + user.total_count + " 胜利场次: " + user.win_count;
+                            information += '<button class="concern"' + 'onclick="concern(' +
+                                user.id + ')">' + "已关注";
+                            information += '</button>';
+                            information += '</div>';
+                        }
+                        jQuery("#serach-total").html(information);
+                    } else {
+                        alert("获取关注失败，请重试!");
+                    }
+               }
+            });
+        }
+        getFollowed();
+
+        function concern(followedId) {
+            jQuery.ajax({
+                url: '/follow/delete',
+                type: 'post',
+                data: {"followedId": followedId},
+                success: function(result) {
+                    if (result != null && result.status == 200 && result.data == 1) {
+                        location.replace("/followed.html");
+                    } else {
+                        alert("取消关注失败");
+                    }
+                }
+            });
+        }
+        
+        
+
+    </script>
+    
+</body>
+</html>

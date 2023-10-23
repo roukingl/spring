@@ -16,7 +16,7 @@ webSocket.onopen = function () {
 }
 
 // 连接发生错误执行的方法
-webSocket.onerror = function() {
+webSocket.onerror = function () {
     console.log("连接发生错误");
 }
 
@@ -155,7 +155,7 @@ function initGame() {
         webSocket.send(JSON.stringify(request));
     }
     // 上面的onmessage方法是玩家准备好时需要初始化页面执行的方法，现在需要修改该方法来处理落子响应
-    webSocket.onmessage = function(e) {
+    webSocket.onmessage = function (e) {
         // 处理成js对象
         var result = JSON.parse(e.data);
 
@@ -201,7 +201,7 @@ function initGame() {
             // 增加一个按钮, 让玩家点击之后, 再回到游戏大厅~
             let backBtn = document.createElement('button');
             backBtn.innerHTML = '回到大厅';
-            backBtn.onclick = function() {
+            backBtn.onclick = function () {
                 location.replace('/game_hall.html');
             }
             let fatherDiv = document.querySelector('.container>div');

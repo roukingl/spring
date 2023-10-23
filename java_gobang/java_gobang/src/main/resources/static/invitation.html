@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邀请房间</title>
+    <link rel="stylesheet" href="css/game_hall.css">
+    <link rel="stylesheet" href="css/common.css">
+</head>
+
+<body>
+    <div class="nav">
+        五子棋对战
+
+        <a href="/game_hall.html">大厅</a>
+    </div>
+
+    <!-- 整个页面的容器元素 -->
+    <div class="container">
+        <!-- 这个 div 在 container 中是处于垂直水平居中这样的位置的 -->
+        <div>
+            <!-- 展示两个用户信息 -->
+            <div id="screen"></div>
+            <!-- 匹配按钮 -->
+            <div id="match-button" onclick="match()">开始匹配</div>
+        </div>
+        <div class="information">
+            <!-- 展示关注人和粉丝的信息 需要两个div-->
+            <div id="followed">
+                <!-- 在这里添加从后端查找到的数据 -->
+            </div>
+            <div id="fans">
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script>
+
+        function getFollowed() {
+
+            // 添加邀请按钮
+            // 从后端得到关注信息
+            jQuery.ajax({
+                url: '/user/getfollowedhall',
+                type: 'post',
+                data: {},
+                success: function (result) {
+                    if (result != null && result.status == 200 && result.data.length >= 0) {
+                        var information = "";
+                        information += '<div>关注</div>';
+                        for (var i = 0; i < result.data.length; i++) {
+                            var followedHall = result.data[i];
+                            var statusLogotype = getUserStatus(followedHall);
+
+                            information += '<div>';
+                            information += "id: " + followedHall.id + "用户名: " + followedHall.username + "\n" + "状态: " + statusLogotype;
+                            information += '</div>';
+                            information += '<button class="attend"' + '" onclink="attendUser()">邀请';
+                            information += '</button>';
+                        }
+                        console.log(information);
+                        jQuery("#followed").html(information);
+                    } else {
+                        // 没有关注的
+                        jQuery("#followed").html("当前没有关注的人");
+                    }
+                }
+            });
+        }
+        getFollowed();
+
+        var webSocketURL = "ws://" + location.host + "/attend";
+        var webSocket = new WebSocket(webSocketURL);
+
+        webSocket.onopen = function () {
+            console.log("连接成功");
+        }
+
+        webSocket.onclose = function () {
+            console.log("关闭链接成功");
+        }
+
+        webSocket.onerror = function () {
+            console.log("出现异常");
+        }
+
+        // 浏览器窗口关闭来主动关闭WebSocket连接
+        window.onbeforeunload = function () {
+            webSocket.close();
+        }
+
+        // 处理服务器得到的响应，响应格式：
+        // boolean OK  // 响应正不正确
+        // String reason  // 响应的原因和描述
+        // String message // 响应报文
+        webSocket.onmessage = function (e) {
+            // 得到响应后
+            var result = JSON.parse(e.data);
+
+            if (!result.OK) {
+                // 失败
+                console.log("收到了失败的响应" + result.reason);
+                return;
+            }
+
+            // 这里判断
+        }
+
+        function attendUser() {
+            // 邀请逻辑，需要websocket协议
+            webSocket.send(JSON.stringify({
+                // 发送
+                message: 'attend'
+            }));
+        }
+
+        function getUserStatus(followedHall) {
+            var statusLogotype = "";
+            if (followedHall.userStatus == 0) {
+                // 未知状态
+                statusLogotype = "未知状态";
+            } else if (followedHall.userStatus == 1) {
+                statusLogotype = "已准备";
+            } else if (followedHall.userStatus == 2) {
+                statusLogotype = "未准备";
+            } else {
+                statusLogotype = "游戏中";
+            }
+            return statusLogotype;
+        }
+
+        function getFans() {
+            jQuery.ajax({
+                url: '/user/getfanshall',
+                type: 'post',
+                data: {},
+                success: function (result) {
+                    if (result != null && result.status == 200 && result.data.length >= 0) {
+                        var information = "";
+                        information += '<div>粉丝</div>';
+                        for (var i = 0; i < result.data.length; i++) {
+                            var followedHall = result.data[i];
+                            var statusLogotype = getUserStatus(followedHall);
+
+                            information += '<div>';
+                            information += "用户名: " + followedHall.username + "\n" + "状态: " + statusLogotype;
+                            information += '</div>';
+                        }
+                        console.log(information);
+                        jQuery("#fans").html(information);
+                    } else {
+                        // 没有粉丝
+                        jQuery("#fans").html("当前没有粉丝");
+                    }
+                }
+            });
+
+        }
+        getFans();
+
+
+        // 先加载房主的信息，右边也有粉丝和关注，但是有邀请按钮
+        // 加载房主信息需要从后端读取吗？还是从前端得到信息
+        function getHomeownerInformation() {
+            jQuery.ajax({
+                url: '/user/showuser',
+                type: 'post',
+                data: {},
+                success: function (result) {
+                    if (result != null && result.status === 200 && result.data != null) {
+                        // 查询成功，添加到页面上
+                        var information = "";
+                        var person = result.data;
+                        information += "用户名：" + person.username + " 天梯积分：" + person.score +
+                            " <br>" + "总场次：" + person.total_count + " 胜利场次：" + person.win_count;
+                        jQuery("#screen").html(information);
+                    } else {
+                        alert("加载信息失败！");
+                        // 跳转到大厅界面
+                    }
+                }
+            });
+        }
+        getHomeownerInformation();
+
+    </script>
+</body>
+
+</html>

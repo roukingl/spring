@@ -1,5 +1,6 @@
 package com.example.java_gobang.config;
 
+import com.example.java_gobang.component.AttendHandler;
 import com.example.java_gobang.component.GameHandler;
 import com.example.java_gobang.component.MatchHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Autowired
     private GameHandler gameHandler;
 
+    @Autowired
+    private AttendHandler addHandler;
+
     // 关联前端url和后端实现类
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
@@ -28,6 +32,8 @@ public class WebSocketConfig implements WebSocketConfigurer {
         registry.addHandler(matchHandler, "/findmatch")
                 .addInterceptors(new HttpSessionHandshakeInterceptor());
         registry.addHandler(gameHandler, "/game")
+                .addInterceptors(new HttpSessionHandshakeInterceptor());
+        registry.addHandler(addHandler, "/attend")
                 .addInterceptors(new HttpSessionHandshakeInterceptor());
     }
 }
