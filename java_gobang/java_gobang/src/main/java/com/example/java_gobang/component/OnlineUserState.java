@@ -12,6 +12,10 @@ public class OnlineUserState {
     // 维护用户在游戏界面的状态
     private final HashMap<Integer, WebSocketSession> userGameRoom = new HashMap<>();
 
+    // 维护用户在自己创建房间的状态，如果在房间里的两个人都能查找到状态后才开始
+    private final HashMap<Integer, WebSocketSession> userGameDouble = new HashMap<>();
+
+
     // 进入大厅就添加session
     public void enterSessionHall(Integer id, WebSocketSession session) {
         userGameHall.put(id, session);
@@ -37,6 +41,21 @@ public class OnlineUserState {
 
     public WebSocketSession getSessionRoom(Integer id) {
         return userGameRoom.get(id);
+    }
+
+    // 进入自建房间就添加session
+    public void enterSessionDouble(Integer id, WebSocketSession session) {
+        userGameHall.put(id, session);
+    }
+
+    // 退出自建房间就删除session
+    public void exitSessionDouble(Integer id) {
+        userGameHall.remove(id);
+    }
+
+    // 根据用户 id 得到session
+    public WebSocketSession getSessionDouble(Integer id) {
+        return userGameHall.get(id);
     }
 
 }

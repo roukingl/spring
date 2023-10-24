@@ -22,9 +22,10 @@
         <!-- 这个 div 在 container 中是处于垂直水平居中这样的位置的 -->
         <div>
             <!-- 展示两个用户信息 -->
-            <div id="screen"></div>
+            <div id="homeowner"></div>
+            <div id="attenduser"></div>
             <!-- 匹配按钮 -->
-            <div id="match-button" onclick="match()">开始匹配</div>
+            <div id="game-button" onclick="match()">开始游戏</div>
         </div>
         <div class="information">
             <!-- 展示关注人和粉丝的信息 需要两个div-->
@@ -58,7 +59,7 @@
                             information += '<div>';
                             information += "id: " + followedHall.id + "用户名: " + followedHall.username + "\n" + "状态: " + statusLogotype;
                             information += '</div>';
-                            information += '<button class="attend"' + '" onclink="attendUser()">邀请';
+                            information += '<button class="attend" id="buttonfollowed"' + followedHall.id + ' " onclink="attendUser( ' + "buttonfollowed, " + followedHall.id + ' )">邀请';
                             information += '</button>';
                         }
                         console.log(information);
@@ -107,29 +108,33 @@
             }
 
             // 这里判断
-        }
+            if (result.message == "attend") {
+                // 邀请成功，在邀请人界面上显示选择进房间还是不进
+                if (confirm("收到xx的邀请，是否进入房间")) {
 
-        function attendUser() {
-            // 邀请逻辑，需要websocket协议
-            webSocket.send(JSON.stringify({
-                // 发送
-                message: 'attend'
-            }));
-        }
-
-        function getUserStatus(followedHall) {
-            var statusLogotype = "";
-            if (followedHall.userStatus == 0) {
-                // 未知状态
-                statusLogotype = "未知状态";
-            } else if (followedHall.userStatus == 1) {
-                statusLogotype = "已准备";
-            } else if (followedHall.userStatus == 2) {
-                statusLogotype = "未准备";
-            } else {
-                statusLogotype = "游戏中";
+                }
+            } else if (result.message == "repeatConnect") {
+                alert(result.reason);
+                webSocket.close();
+                location.replace("/login.html");
             }
-            return statusLogotype;
+        }
+
+        function attendUser(button, attendUserId) {
+            var attendButton = document.querySelector(button + attendUserId);
+            var homeowner = document.querySelector('homeowner');
+            if (attendButton.innerHTML == "邀请") {
+                webSocket.send({
+                    message: "attend",
+                    homeownerUsername: homeowner.innerHTML,
+                    attendUserId:attendUserId
+                });
+            } else if (attendButton.innerHTML == "已邀请") {
+
+            } else {
+                alert("邀请失败");
+                location.replace("/login.html");
+            }
         }
 
         function getFans() {
@@ -148,6 +153,8 @@
                             information += '<div>';
                             information += "用户名: " + followedHall.username + "\n" + "状态: " + statusLogotype;
                             information += '</div>';
+                            information += '<button class="attend" id="buttonfans" ' + followedHall.id + ' onclink="attendUser(' + "buttonfans, " + followedHall.id + ')">邀请';
+                            information += '</button>';
                         }
                         console.log(information);
                         jQuery("#fans").html(information);
@@ -160,6 +167,23 @@
 
         }
         getFans();
+
+        function getUserStatus(followedHall) {
+            var statusLogotype = "";
+            if (followedHall.userStatus == 0) {
+                // 未知状态
+                statusLogotype = "未知状态";
+            } else if (followedHall.userStatus == 1) {
+                statusLogotype = "已准备";
+            } else if (followedHall.userStatus == 2) {
+                statusLogotype = "未准备";
+            } else {
+                statusLogotype = "游戏中";
+            }
+            return statusLogotype;
+        }
+
+        
 
 
         // 先加载房主的信息，右边也有粉丝和关注，但是有邀请按钮
@@ -176,7 +200,7 @@
                         var person = result.data;
                         information += "用户名：" + person.username + " 天梯积分：" + person.score +
                             " <br>" + "总场次：" + person.total_count + " 胜利场次：" + person.win_count;
-                        jQuery("#screen").html(information);
+                        jQuery("#homeowner").html(information);
                     } else {
                         alert("加载信息失败！");
                         // 跳转到大厅界面
