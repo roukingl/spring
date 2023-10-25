@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class AttendRequest {
     private String message;
-    private String homeownerUsername;
+    private int homeownerUserId;
     private int attendUserId;
 }

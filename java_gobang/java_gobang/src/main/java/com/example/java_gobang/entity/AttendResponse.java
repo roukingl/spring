@@ -8,5 +8,6 @@ public class AttendResponse {
     private boolean ok;
     private String reason;
     private String message;
-    private int attendUserId;
+    private User homeownerUser;
+    private User attendUser;
 }

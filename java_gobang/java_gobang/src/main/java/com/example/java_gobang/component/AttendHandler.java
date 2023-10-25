@@ -1,10 +1,8 @@
 package com.example.java_gobang.component;
 
 import com.example.java_gobang.common.AppVariable;
-import com.example.java_gobang.entity.AttendRequest;
-import com.example.java_gobang.entity.AttendResponse;
-import com.example.java_gobang.entity.MatchResponse;
-import com.example.java_gobang.entity.User;
+import com.example.java_gobang.entity.*;
+import com.example.java_gobang.mapper.UserMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,6 +22,9 @@ public class AttendHandler extends TextWebSocketHandler {
 
     @Autowired
     private DoubleRoomManager doubleRoomManager;
+
+    @Autowired
+    private UserMapper userMapper;
 
     // 连接后执行的方法
     @Override
@@ -51,8 +52,6 @@ public class AttendHandler extends TextWebSocketHandler {
 
         // 需要一个管理创建房间的状态 Map
         onlineUserState.enterSessionDouble(user.getId(), session);
-        // 每个用户进入房间得到所有在房间里的用户信息
-        doubleRoomManager.enterDoubleRoom(user, String.valueOf(session.getTextMessageSizeLimit()));
 
         System.out.println(user.getUsername() + "进入自建房间") ;
     }
@@ -70,21 +69,37 @@ public class AttendHandler extends TextWebSocketHandler {
             return;
         }
         AttendRequest attendRequest = objectMapper.readValue(message.getPayload(), AttendRequest.class);
-        AttendResponse attendResponse = new AttendResponse();
         if ("attend".equals(attendRequest.getMessage())) {
-            // 得到邀请的
-            doubleRoomManager.enterDoubleRoom(user, attendRequest.getHomeownerUsername());
+            // 给邀请的那个人传递一个报文，你面包含发出邀请的那个人的姓名，用来辨识
+            AttendResponse attendResponse = new AttendResponse();
             attendResponse.setOk(true);
             attendResponse.setMessage("attend");
+            attendResponse.setHomeownerUser(user);
+            attendResponse.setAttendUser(userMapper.selectUserById(attendRequest.getAttendUserId()));
             WebSocketSession attendSession = onlineUserState.getSessionDouble(attendRequest.getAttendUserId());
             attendSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(attendResponse)));
             return;
-        } else if ("") {
-            // 按钮是已邀请的
-        } else if {
-            // 按钮是开始游戏的
+        } else if ("roomManager".equals(attendRequest.getMessage())) {
+            // 是前端得到自己信息后加载房间状态
+            boolean addSuccess = doubleRoomManager.enterDoubleRoom(user, userMapper.selectUserById(attendRequest.getHomeownerUserId()).getUsername());
+        } else if ("enter".equals(attendRequest.getMessage())) {
+            // 已经同意进入房间
+            // 被邀请人退出原来的房间
+            doubleRoomManager.exitDoubleRoom(user);
+            // 被邀请人加入房间 TODO 加入房间前需要检测房间状态
+            boolean addSuccess = doubleRoomManager.enterDoubleRoom(user, userMapper.selectUserById(attendRequest.getHomeownerUserId()).getUsername());
+            User attendUser = userMapper.selectUserVOById(attendRequest.getAttendUserId());
+            AttendResponse attendResponse = new AttendResponse();
+            attendResponse.setOk(true);
+            attendResponse.setMessage("enter");
+            attendResponse.setAttendUser(attendUser);
+            // 发送给房主被邀请人的信息来在前端展示
+            WebSocketSession homeownerSession = onlineUserState.getSessionDouble(attendRequest.getHomeownerUserId());
+            homeownerSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(attendResponse)));
+        } else if ("playgame".equals(attendRequest.getMessage())) {
+            // 检测到点击到开始游戏按钮 检查两个用户的房间状态 ，状态正常创建房间，房间加入房间管理器
+
         }
-        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(attendResponse)));
     }
 
     // 程序发生异常后执行的方法

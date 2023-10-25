@@ -25,7 +25,7 @@
             <div id="homeowner"></div>
             <div id="attenduser"></div>
             <!-- 匹配按钮 -->
-            <div id="game-button" onclick="match()">开始游戏</div>
+            <div id="game-button" onclick="game()">开始游戏</div>
         </div>
         <div class="information">
             <!-- 展示关注人和粉丝的信息 需要两个div-->
@@ -77,6 +77,7 @@
         var webSocket = new WebSocket(webSocketURL);
 
         webSocket.onopen = function () {
+            webSocket.send
             console.log("连接成功");
         }
 
@@ -110,13 +111,55 @@
             // 这里判断
             if (result.message == "attend") {
                 // 邀请成功，在邀请人界面上显示选择进房间还是不进
-                if (confirm("收到xx的邀请，是否进入房间")) {
+                if (confirm("收到" + result.person.username + "的邀请，是否进入房间")) {
+                    // 在邀请人的房间中加载被邀请人的信息
+                    var homeownerInformation = "";
+                    var homeownerUser = result.homeownerUser;
+                    homeownerInformation += "用户名：" + homeownerUser.username + " 天梯积分：" + homeownerUser.score +
+                        " <br>" + "总场次：" + homeownerUser.total_count + " 胜利场次：" + homeownerUser.win_count;
 
+                    var attendInformation = "";
+                    var attendUser = result.attendUser;
+                    attendInformation += "用户名：" + attendUser.username + " 天梯积分：" + attendUser.score +
+                        " <br>" + "总场次：" + attendUser.total_count + " 胜利场次：" + attendUser.win_count;
+
+                    jQuery("#homeowner").html(homeownerInformation);
+                    jQuery("#attend").html(attendInformation);
+
+
+                    // 发送一个websocket请求，用来给发送邀请的人加载邀请人的信息，邀请人的界面
+                    // 也需要加载发送邀请人的信息，还需要管理状态
+                    // 邀请人原来是房主，被邀请进入后需要删除原房间的状态映射，发送邀请的人的界面
+                    // 需要修改房间映射
+                    // 发送这几个信息: 被邀请人的用户id, 邀请人的id，
+                    webSocket.send({
+                        message: "enter",
+                        homeownerUserId: homeownerUser.id,
+                        attendUserId: attendUser.id
+                    });
                 }
+            } else if (result.message == "enter") {
+                // 加载信息
+                var attendInformation = "";
+                var attendUser = result.attendUser;
+                attendInformation += "用户名：" + attendUser.username + " 天梯积分：" + attendUser.score +
+                    " <br>" + "总场次：" + attendUser.total_count + " 胜利场次：" + attendUser.win_count;
+                jQuery("#attend").html(attendInformation);
+
             } else if (result.message == "repeatConnect") {
                 alert(result.reason);
                 webSocket.close();
                 location.replace("/login.html");
+            }
+        }
+
+        function game() {
+            // 点击开始按钮后执行该方法
+            var gameButton = document.querySelector('game-button');
+            if (gameButton.innerHTML == "开始游戏") {
+                webSocket.send({
+                    message: "playgame"
+                });
             }
         }
 
@@ -126,8 +169,7 @@
             if (attendButton.innerHTML == "邀请") {
                 webSocket.send({
                     message: "attend",
-                    homeownerUsername: homeowner.innerHTML,
-                    attendUserId:attendUserId
+                    attendUserId: attendUserId
                 });
             } else if (attendButton.innerHTML == "已邀请") {
 
@@ -183,12 +225,13 @@
             return statusLogotype;
         }
 
-        
+
 
 
         // 先加载房主的信息，右边也有粉丝和关注，但是有邀请按钮
         // 加载房主信息需要从后端读取吗？还是从前端得到信息
         function getHomeownerInformation() {
+            var homeownerUsername;
             jQuery.ajax({
                 url: '/user/showuser',
                 type: 'post',
@@ -200,12 +243,19 @@
                         var person = result.data;
                         information += "用户名：" + person.username + " 天梯积分：" + person.score +
                             " <br>" + "总场次：" + person.total_count + " 胜利场次：" + person.win_count;
+                        homeownerUsername = person.username;
                         jQuery("#homeowner").html(information);
                     } else {
                         alert("加载信息失败！");
                         // 跳转到大厅界面
                     }
                 }
+            });
+            // 进入界面的时候需要设置状态，得到自己信息后需要再给后端发送信息
+            // 存储自己session信息
+            webSocket.send({
+                message: "roomManager",
+                homeownerUsername: homeownerUsername
             });
         }
         getHomeownerInformation();
