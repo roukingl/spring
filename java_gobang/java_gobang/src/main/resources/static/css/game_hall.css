@@ -11,6 +11,19 @@
     background-image: linear-gradient(to right, #434343 0%, black 100%);
 }
 
+#screen {
+    width: 400px;
+    height: 200px;
+    font-size: 20px;
+    background-color: gray; 
+    color: white;
+    border-radius: 10px;
+
+    text-align: center;
+    line-height: 100px;
+    background-image: linear-gradient(to right, #434343 0%, black 100%);
+}
+
 #attender {
     width: 400px;
     height: 200px;
@@ -22,6 +35,21 @@
     text-align: center;
     line-height: 100px;
     background-image: linear-gradient(to right, #434343 0%, black 100%);
+}
+
+#match-button {
+    width: 400px;
+    height: 50px;
+    font-size: 20px;
+    color: white;
+    background-color: orange;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+
+    text-align: center;
+    line-height: 50px;
+    margin-top: 20px;
 }
 
 #game-button {

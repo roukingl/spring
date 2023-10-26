@@ -38,7 +38,7 @@
     </div>
 
     <script src="js/jquery.min.js"></script>
-    <script>
+    <script>   
 
         function getFollowed() {
 
@@ -150,6 +150,12 @@
                 alert(result.reason);
                 webSocket.close();
                 location.replace("/login.html");
+            } else if (result.message == "gameSuccess") {
+                // 开始游戏成功，跳转游戏界面
+                location.replace("/game_rome.html");
+            } else if (result.message == "errorButton") {
+                // 另一个点到开始游戏，提醒点击无用
+                alert("你当前不是房主，点击无效");
             }
         }
 
@@ -166,6 +172,7 @@
         function attendUser(button, attendUserId) {
             var attendButton = document.querySelector(button + attendUserId);
             var homeowner = document.querySelector('homeowner');
+            console.log("邀请");
             if (attendButton.innerHTML == "邀请") {
                 webSocket.send({
                     message: "attend",

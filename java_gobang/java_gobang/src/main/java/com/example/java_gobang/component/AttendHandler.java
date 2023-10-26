@@ -11,6 +11,9 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.util.List;
+import java.util.Random;
+
 @Component
 public class AttendHandler extends TextWebSocketHandler {
 
@@ -25,6 +28,9 @@ public class AttendHandler extends TextWebSocketHandler {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private RoomManager roomManager;
 
     // 连接后执行的方法
     @Override
@@ -98,7 +104,33 @@ public class AttendHandler extends TextWebSocketHandler {
             homeownerSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(attendResponse)));
         } else if ("playgame".equals(attendRequest.getMessage())) {
             // 检测到点击到开始游戏按钮 检查两个用户的房间状态 ，状态正常创建房间，房间加入房间管理器
-
+            // 检查是不是房主点的开始游戏
+            if (doubleRoomManager.isHomeowner(user)) {
+                // 开始游戏
+                List<User> doubleUserList = doubleRoomManager.getDoubleUser(user);
+                Room room = new Room();
+                // 随机
+                Random random = new Random();
+                int number1 = random.nextInt() % 2;
+                User user1 = doubleUserList.get(number1);
+                User user2 = doubleUserList.get(number1 == 0 ? 1 : 0);
+                roomManager.addRoom(room, user1.getId(), user2.getId());
+                WebSocketSession session1 = onlineUserState.getSessionDouble(user1.getId());
+                WebSocketSession session2 = onlineUserState.getSessionDouble(user2.getId());
+                MatchRequest matchRequest1 = new MatchRequest();
+                matchRequest1.setMessage("gameSuccess");
+                MatchRequest matchRequest2 = new MatchRequest();
+                matchRequest2.setMessage("gameSuccess");
+                session1.sendMessage(new TextMessage(objectMapper.writeValueAsString(matchRequest1)));
+                session2.sendMessage(new TextMessage(objectMapper.writeValueAsString(matchRequest2)));
+            } else {
+                WebSocketSession tmpSession = onlineUserState.getSessionDouble(user.getId());
+                MatchRequest matchRequest = new MatchRequest();
+                matchRequest.setMessage("errorButton");
+                if (tmpSession == session) {
+                    tmpSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(matchRequest)));
+                }
+            }
         }
     }
 

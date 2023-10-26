@@ -15,7 +15,7 @@ public class DoubleRoomManager {
 
     // 管理每个房间用户，检查每个自建房间用户不能重复
     // key是自建房间房主的用户名，value是该自建房间中的人数
-    private final Map<String, LinkedList<User>> doubleRoomQueueManager = new HashMap<>();
+    private final Map<String, LinkedList<User>> doubleRoomListManager = new HashMap<>();
 
     // 再来个 Map 存储，邀请人映射房主的 Map， 用于通过第二人找到房主
     private final Map<String, String> attenderToHomeowner = new HashMap<>();
@@ -34,15 +34,15 @@ public class DoubleRoomManager {
             return false;
         }
 
-        if (!doubleRoomQueueManager.containsKey(homeownerUsername)) {
+        if (!doubleRoomListManager.containsKey(homeownerUsername)) {
             // 没有查到房间队列说明是房间刚创建
             LinkedList<User> linkedList = new LinkedList<>();
             linkedList.add(user);
-            doubleRoomQueueManager.put(homeownerUsername, linkedList);
+            doubleRoomListManager.put(homeownerUsername, linkedList);
             anyDoubleRoomUserId.add(user.getId());
         } else {
             // 查得到房间队列，说明是邀请人刚刚进入房间，在该队列中插入邀请人的信息, 还要邀请人映射房主
-            doubleRoomQueueManager.get(homeownerUsername).add(user);
+            doubleRoomListManager.get(homeownerUsername).add(user);
             attenderToHomeowner.put(user.getUsername(), homeownerUsername);
             anyDoubleRoomUserId.add(user.getId());
         }
@@ -53,26 +53,40 @@ public class DoubleRoomManager {
     // 参数是退出那个用户的对象
     public void exitDoubleRoom(User user) {
         // 把退出的用户从状态Map和房间队列中删除， 分3种情况 1. 退出的是房主 2.退出的是邀请人，3. 退出的是最后一个人，需要关闭资源
-        if (doubleRoomQueueManager.get(user.getUsername()).size() == 1) {
+        if (doubleRoomListManager.get(user.getUsername()).size() == 1) {
             // 一个人房主退出， 清理状态
             anyDoubleRoomUserId.remove(user.getId());
-            doubleRoomQueueManager.remove(user.getUsername());
+            doubleRoomListManager.remove(user.getUsername());
         } else {
             if (attenderToHomeowner.containsKey(user.getUsername())) {
                 // 退出的是邀请人
                 anyDoubleRoomUserId.remove(user.getId());
                 // 找到房主姓名再找到链表，然后尾删
-                doubleRoomQueueManager.get(attenderToHomeowner.get(user.getUsername())).removeLast();
+                doubleRoomListManager.get(attenderToHomeowner.get(user.getUsername())).removeLast();
                 attenderToHomeowner.remove(user.getUsername());
                 anyDoubleRoomUserId.remove(user.getId());
             } else if (attenderToHomeowner.containsValue(user.getUsername())) {
                 // 两个人房主退出，转让房主
-                LinkedList<User> linkedList = doubleRoomQueueManager.remove(user.getUsername());
+                LinkedList<User> linkedList = doubleRoomListManager.remove(user.getUsername());
                 User homeowner = linkedList.removeFirst();
-                doubleRoomQueueManager.put(linkedList.getFirst().getUsername(), linkedList);
+                doubleRoomListManager.put(linkedList.getFirst().getUsername(), linkedList);
                 attenderToHomeowner.remove(linkedList.getFirst().getUsername());
                 anyDoubleRoomUserId.remove(homeowner.getId());
+
             }
         }
     }
+
+    // 检查是不是房主,是房主返回真，不是房主返回假
+    public boolean isHomeowner(User user) {
+        if (anyDoubleRoomUserId.contains(user.getId()) && doubleRoomListManager.containsKey(user.getUsername())) {
+            return true;
+        }
+        return false;
+    }
+
+    public List<User> getDoubleUser(User user) {
+        return doubleRoomListManager.get(user.getUsername());
+    }
+
 }

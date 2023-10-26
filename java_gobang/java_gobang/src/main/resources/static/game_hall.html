@@ -19,7 +19,7 @@
 
         <a href="/followed.html" class="followed">关注</a>
         <a href="/fans.html" class="fans">粉丝</a>
-        <a onclick="attend()">房间</a>
+        <a href="/invitation.html"">房间</a>
     </div>
     <!-- 整个页面的容器元素 -->
     <div class="container">
@@ -43,21 +43,6 @@
 
     <script src="js/jquery.min.js"></script>
     <script>
-        function attend() {
-            // 先得到当前登录用户的id，跳转的界面带上id
-            jQuery.ajax({
-                url: '/user/showuser',
-                type: 'post',
-                data: {},
-                success: function (result) {
-                    if (result != null && result.status == 200 && result.data != null) {
-                        location.replace("/invitation.html?id=" + result.data.id);
-                    } else {
-                        alert("跳转失败");
-                    }
-                }
-            });
-        }
 
         function getFollowed() {
             // 从后端得到关注信息
