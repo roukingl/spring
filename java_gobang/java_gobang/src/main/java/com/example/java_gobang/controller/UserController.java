@@ -42,6 +42,7 @@ public class UserController {
         int row = userService.addUserService(user);
         return AjaxResult.success(row);
     }
+
     @PostMapping("/showuser")
     public AjaxResult intiShowUser(HttpServletRequest request) {
         User user = UserSessionUtils.getUser(request);
