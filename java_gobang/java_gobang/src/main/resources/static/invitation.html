@@ -40,6 +40,9 @@
     <script src="js/jquery.min.js"></script>
     <script>   
 
+        var homeownerUserId;
+
+
         function getFollowed() {
 
             // 添加邀请按钮
@@ -59,7 +62,7 @@
                             information += '<div>';
                             information += "id: " + followedHall.id + "用户名: " + followedHall.username + "\n" + "状态: " + statusLogotype;
                             information += '</div>';
-                            information += '<button class="attend" id="buttonfollowed"' + followedHall.id + ' " onclink="attendUser( ' + "buttonfollowed, " + followedHall.id + ' )">邀请';
+                            information += '<button class="attend" id="buttonfollowed' + followedHall.id + '" onclink="attendUser(' + "buttonfollowed, " + followedHall.id + ')">邀请';
                             information += '</button>';
                         }
                         console.log(information);
@@ -77,7 +80,12 @@
         var webSocket = new WebSocket(webSocketURL);
 
         webSocket.onopen = function () {
-            webSocket.send
+            // 进入界面的时候需要设置状态，得到自己信息后需要再给后端发送信息
+            // 存储自己session信息
+            webSocket.send({
+                message: "roomManager",
+                homeownerUserId: homeownerUserId
+            });
             console.log("连接成功");
         }
 
@@ -138,6 +146,11 @@
                         attendUserId: attendUser.id
                     });
                 }
+            } else if (result.message == "homeownerAttend") {
+                // 房主邀请后需要把邀请按钮改为 "已邀请"
+                jQuery("buttonfollowed" + result.attendUser.id).html("已邀请");
+                jQuery("buttonfans" + result.attendUser.id).html("已邀请");
+                
             } else if (result.message == "enter") {
                 // 加载信息
                 var attendInformation = "";
@@ -179,7 +192,7 @@
                     attendUserId: attendUserId
                 });
             } else if (attendButton.innerHTML == "已邀请") {
-
+                alert("已经邀请该用户了");
             } else {
                 alert("邀请失败");
                 location.replace("/login.html");
@@ -202,7 +215,7 @@
                             information += '<div>';
                             information += "用户名: " + followedHall.username + "\n" + "状态: " + statusLogotype;
                             information += '</div>';
-                            information += '<button class="attend" id="buttonfans" ' + followedHall.id + ' onclink="attendUser(' + "buttonfans, " + followedHall.id + ')">邀请';
+                            information += '<button class="attend" id="buttonfans' + followedHall.id + '" onclink="attendUser(' + "buttonfans, " + followedHall.id + ')">邀请';
                             information += '</button>';
                         }
                         console.log(information);
@@ -232,13 +245,9 @@
             return statusLogotype;
         }
 
-
-
-
         // 先加载房主的信息，右边也有粉丝和关注，但是有邀请按钮
         // 加载房主信息需要从后端读取吗？还是从前端得到信息
         function getHomeownerInformation() {
-            var homeownerUsername;
             jQuery.ajax({
                 url: '/user/showuser',
                 type: 'post',
@@ -250,7 +259,7 @@
                         var person = result.data;
                         information += "用户名：" + person.username + " 天梯积分：" + person.score +
                             " <br>" + "总场次：" + person.total_count + " 胜利场次：" + person.win_count;
-                        homeownerUsername = person.username;
+                        homeownerUserId = person.id;
                         jQuery("#homeowner").html(information);
                     } else {
                         alert("加载信息失败！");
@@ -258,12 +267,7 @@
                     }
                 }
             });
-            // 进入界面的时候需要设置状态，得到自己信息后需要再给后端发送信息
-            // 存储自己session信息
-            webSocket.send({
-                message: "roomManager",
-                homeownerUsername: homeownerUsername
-            });
+            
         }
         getHomeownerInformation();
 

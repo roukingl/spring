@@ -82,9 +82,15 @@ public class AttendHandler extends TextWebSocketHandler {
             attendResponse.setMessage("attend");
             attendResponse.setHomeownerUser(user);
             attendResponse.setAttendUser(userMapper.selectUserById(attendRequest.getAttendUserId()));
+            AttendResponse userResponse = new AttendResponse();
+            userResponse.setOk(true);
+            userResponse.setMessage("homeownerAttend");
+            userResponse.setAttendUser(userMapper.selectUserById(attendRequest.getAttendUserId()));
+            // 返回两个响应，一个给房主用来加载改变邀请按钮样式，一个给被邀请人用来弹出邀请提示
             WebSocketSession attendSession = onlineUserState.getSessionDouble(attendRequest.getAttendUserId());
+            WebSocketSession userSession = onlineUserState.getSessionDouble(user.getId());
+            userSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(userResponse)));
             attendSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(attendResponse)));
-            return;
         } else if ("roomManager".equals(attendRequest.getMessage())) {
             // 是前端得到自己信息后加载房间状态
             boolean addSuccess = doubleRoomManager.enterDoubleRoom(user, userMapper.selectUserById(attendRequest.getHomeownerUserId()).getUsername());
