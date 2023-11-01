@@ -2,12 +2,11 @@ package com.example.java_gobang.mapper;
 
 import com.example.java_gobang.entity.User;
 import com.example.java_gobang.entity.vo.UserVO;
-import com.example.java_gobang.entity.vo.UserVOHall;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Mapper
 public interface UserMapper {

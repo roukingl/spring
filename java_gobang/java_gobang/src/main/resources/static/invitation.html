@@ -82,10 +82,10 @@
         webSocket.onopen = function () {
             // 进入界面的时候需要设置状态，得到自己信息后需要再给后端发送信息
             // 存储自己session信息
-            webSocket.send({
+            webSocket.send(JSON.stringify({
                 message: "roomManager",
                 homeownerUserId: homeownerUserId
-            });
+            }));
             console.log("连接成功");
         }
 
@@ -140,11 +140,11 @@
                     // 邀请人原来是房主，被邀请进入后需要删除原房间的状态映射，发送邀请的人的界面
                     // 需要修改房间映射
                     // 发送这几个信息: 被邀请人的用户id, 邀请人的id，
-                    webSocket.send({
+                    webSocket.send(JSON.stringify({
                         message: "enter",
                         homeownerUserId: homeownerUser.id,
                         attendUserId: attendUser.id
-                    });
+                    }));
                 }
             } else if (result.message == "homeownerAttend") {
                 // 房主邀请后需要把邀请按钮改为 "已邀请"
@@ -176,9 +176,9 @@
             // 点击开始按钮后执行该方法
             var gameButton = document.querySelector('game-button');
             if (gameButton.innerHTML == "开始游戏") {
-                webSocket.send({
+                webSocket.send(JSON.stringify({
                     message: "playgame"
-                });
+                }));
             }
         }
 
@@ -187,10 +187,10 @@
             var homeowner = document.querySelector('homeowner');
             console.log("邀请");
             if (attendButton.innerHTML == "邀请") {
-                webSocket.send({
+                webSocket.send(JSON.stringify({
                     message: "attend",
                     attendUserId: attendUserId
-                });
+                }));
             } else if (attendButton.innerHTML == "已邀请") {
                 alert("已经邀请该用户了");
             } else {

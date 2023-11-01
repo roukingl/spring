@@ -123,12 +123,11 @@ public class AttendHandler extends TextWebSocketHandler {
                 roomManager.addRoom(room, user1.getId(), user2.getId());
                 WebSocketSession session1 = onlineUserState.getSessionDouble(user1.getId());
                 WebSocketSession session2 = onlineUserState.getSessionDouble(user2.getId());
-                MatchRequest matchRequest1 = new MatchRequest();
-                matchRequest1.setMessage("gameSuccess");
-                MatchRequest matchRequest2 = new MatchRequest();
-                matchRequest2.setMessage("gameSuccess");
-                session1.sendMessage(new TextMessage(objectMapper.writeValueAsString(matchRequest1)));
-                session2.sendMessage(new TextMessage(objectMapper.writeValueAsString(matchRequest2)));
+                AttendResponse attendResponse = new AttendResponse();
+                attendResponse.setOk(true);
+                attendResponse.setMessage("gameSuccess");
+                session1.sendMessage(new TextMessage(objectMapper.writeValueAsString(attendResponse)));
+                session2.sendMessage(new TextMessage(objectMapper.writeValueAsString(attendResponse)));
             } else {
                 WebSocketSession tmpSession = onlineUserState.getSessionDouble(user.getId());
                 MatchRequest matchRequest = new MatchRequest();
