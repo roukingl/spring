@@ -16,7 +16,6 @@ import java.util.Random;
 
 @Component
 public class AttendHandler extends TextWebSocketHandler {
-
     @Autowired
     private ObjectMapper objectMapper;
 
