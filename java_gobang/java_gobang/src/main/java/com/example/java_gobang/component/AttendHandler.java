@@ -21,7 +21,6 @@ public class AttendHandler extends TextWebSocketHandler {
 
     @Autowired
     private OnlineUserState onlineUserState;
-
     @Autowired
     private DoubleRoomManager doubleRoomManager;
 
