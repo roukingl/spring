@@ -2,5 +2,5 @@
 spring:
   redis:
     database: 15
-    port: 6379
-    host: 152.136.196.221
+    port: 8888
+    host: 127.0.0.1

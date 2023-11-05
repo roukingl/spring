@@ -11,8 +11,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Component
 public class AttendHandler extends TextWebSocketHandler {
@@ -41,7 +40,6 @@ public class AttendHandler extends TextWebSocketHandler {
             session.sendMessage(new TextMessage(objectMapper.writeValueAsString(attendResponse)));
             return;
         }
-
         if (onlineUserState.getSessionHall(user.getId()) != null
             || onlineUserState.getSessionRoom(user.getId()) != null
             || onlineUserState.getSessionDouble(user.getId()) != null) {
