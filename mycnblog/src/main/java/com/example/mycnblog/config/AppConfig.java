@@ -10,6 +10,7 @@ public class AppConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new com.example.mycnblog.config.LoginInterceptor())
                 .addPathPatterns("/**")
+
                 .excludePathPatterns("/css/**")
                 .excludePathPatterns("/editor.md/**")
                 .excludePathPatterns("/img/**")
