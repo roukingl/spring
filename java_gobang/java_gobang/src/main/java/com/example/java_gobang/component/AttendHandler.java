@@ -40,6 +40,7 @@ public class AttendHandler extends TextWebSocketHandler {
             session.sendMessage(new TextMessage(objectMapper.writeValueAsString(attendResponse)));
             return;
         }
+        
         if (onlineUserState.getSessionHall(user.getId()) != null
             || onlineUserState.getSessionRoom(user.getId()) != null
             || onlineUserState.getSessionDouble(user.getId()) != null) {
