@@ -36,6 +36,7 @@ public class MatchHandler extends TextWebSocketHandler {
             return;
         }
 
+
         if (onlineUserState.getSessionHall(user.getId()) != null
             || onlineUserState.getSessionRoom(user.getId()) != null) {
             MatchResponse matchResponse = MatchResponse.fail(true, "游戏禁止多开", "repeatConnection");
