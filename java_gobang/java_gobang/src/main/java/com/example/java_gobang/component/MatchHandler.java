@@ -95,7 +95,6 @@ public class MatchHandler extends TextWebSocketHandler {
         }
         matchQueue.removeUserFromQueue(user);
     }
-
     // 在连接关闭时执行
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
