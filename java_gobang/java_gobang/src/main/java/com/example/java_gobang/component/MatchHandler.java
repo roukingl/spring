@@ -104,7 +104,6 @@ public class MatchHandler extends TextWebSocketHandler {
             // 未登录的状态，直接返回
             return;
         }
-
         WebSocketSession tempsession = onlineUserState.getSessionHall(user.getId());
         if (tempsession == session) {
             // 当根据用户id从准备hash查到的session和前端传来的session相同时，才从准备hash中删除，表明
